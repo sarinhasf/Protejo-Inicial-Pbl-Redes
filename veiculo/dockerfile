@@ -1,0 +1,6 @@
+FROM golang:1.20
+WORKDIR /app
+COPY main.go .
+COPY dados.json .
+RUN go build -o veiculo main.go
+CMD ["./veiculo"]

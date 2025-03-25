@@ -1,0 +1,20 @@
+services:
+  server:
+    build: ./server
+    container_name: server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server/dados.json:/app/dados.json
+
+  veiculo:
+    build: ./veiculo
+    container_name: veiculo
+    depends_on:
+      - server
+
+  ponto:
+    build: ./ponto
+    container_name: ponto
+    depends_on:
+      - server

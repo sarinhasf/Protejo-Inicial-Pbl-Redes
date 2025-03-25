@@ -1,0 +1,9 @@
+FROM golang:1.20
+#Criação do diretorio 
+WORKDIR /app 
+#Copia main.go e dados.json para o contêiner
+COPY main.go .
+COPY dados.json .
+#Quando o contêiner inicia, executa ./server para rodar o servidor
+RUN go build -o server main.go
+CMD ["./server"]

@@ -1,0 +1,46 @@
+{
+    "veiculos": [
+      {
+        "placa": "NAY00235",
+        "localizacao": {
+          "latitude": -23.550520,
+          "longitude": -46.633308
+        },
+        "nivel_bateria": 85
+      },
+      {
+        "placa": "HELENA56",
+        "localizacao": {
+          "latitude": -22.902780,
+          "longitude": -43.187145
+        },
+        "nivel_bateria": 50
+      },
+      {
+        "placa": "SARA1405",
+        "localizacao": {
+          "latitude": -72.902780,
+          "longitude": -63.187145
+        },
+        "nivel_bateria": 20
+      }
+    ],
+
+    "pontos_de_recarga": [
+      {
+        "nome": "PONTO A",
+        "localizacao": {
+          "latitude": -23.561684,
+          "longitude": -46.625378
+        }
+      },
+      {
+        "nome": "PONTO B",
+        "localizacao": {
+          "latitude": -22.912345,
+          "longitude": -43.187456
+        }
+      }
+    ]
+  }
+  
