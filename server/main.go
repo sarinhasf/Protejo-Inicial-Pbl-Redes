@@ -3,7 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+
+	//"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -11,12 +12,12 @@ import (
 
 // Estrutura para armazenar dados
 type Data struct {
-	Veiculos         []string `json:"veiculos"`
-	PontosDeRecarga  []string `json:"pontos_de_recarga"`
+	Veiculos        []string `json:"veiculos"`
+	PontosDeRecarga []string `json:"pontos_de_recarga"`
 }
 
 func carregarDados() Data {
-	file, err := ioutil.ReadFile("data.json")
+	file, err := os.ReadFile("data.json")
 	if err != nil {
 		fmt.Println("Erro ao ler JSON:", err)
 		return Data{}
@@ -28,7 +29,7 @@ func carregarDados() Data {
 
 func salvarDados(data Data) {
 	file, _ := json.MarshalIndent(data, "", "  ")
-	ioutil.WriteFile("data.json", file, 0644)
+	os.WriteFile("data.json", file, 0644)
 }
 
 func handleConnection(conn net.Conn) {
@@ -45,6 +46,14 @@ func handleConnection(conn net.Conn) {
 	//Caso não tenha dado erro, exibimos a mensagem
 	mensagem := strings.TrimSpace(string(buffer[:n]))
 	fmt.Println("Recebido:", mensagem)
+
+	//define mensagem
+	/*mensagem = fmt.Sprintln("oi helena")
+	_, err = conn.Write([]byte(mensagem))
+	if err != nil {
+		fmt.Println("Erro ao enviar mensagem:", err)
+		return
+	}*/
 
 	//dados := carregarDados()
 	//if strings.HasPrefix(mensagem, "VEICULO:") {
@@ -81,7 +90,7 @@ func main() {
 
 		//O uso de go antes da chamada cria uma goroutine, ou seja, executa a função de forma assíncrona
 		//Ou seja, criamos uma thread
-		//Isso permite que o servidor continue aceitando novas conexões sem precisar esperar o 
+		//Isso permite que o servidor continue aceitando novas conexões sem precisar esperar o
 		//processamento de uma conexão terminar
 		go handleConnection(conn) //passa a conxeão para nossa função
 	}
