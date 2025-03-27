@@ -13,7 +13,7 @@ services:
     depends_on:
       - server
     volumes:
-      - ./veiculo/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./mapa/MapaDeFeira.csv:/app/MapaDeFeira.csv
 
   ponto:
     build: ./ponto
