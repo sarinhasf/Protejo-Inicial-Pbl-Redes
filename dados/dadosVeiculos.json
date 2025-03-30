@@ -1,6 +1,7 @@
 {
     "veiculos": [
-      {
+      { 
+        "ID":"1",
         "placa": "NAY00235",
         "localizacao": {
           "latitude": -23.550520,
@@ -9,6 +10,7 @@
         "nivel_bateria": 85
       },
       {
+        "ID":"2",
         "placa": "HELENA56",
         "localizacao": {
           "latitude": -22.902780,
@@ -17,30 +19,32 @@
         "nivel_bateria": 50
       },
       {
+        "ID":"3",
         "placa": "SARA1405",
         "localizacao": {
           "latitude": -72.902780,
           "longitude": -63.187145
         },
         "nivel_bateria": 20
-      }
-    ],
-
-    "pontos_de_recarga": [
-      {
-        "nome": "PONTO A",
-        "localizacao": {
-          "latitude": -23.561684,
-          "longitude": -46.625378
-        }
       },
       {
-        "nome": "PONTO B",
+        "ID":"4",
+        "placa": "BRENDA2424",
         "localizacao": {
-          "latitude": -22.912345,
-          "longitude": -43.187456
-        }
+          "latitude": -72.902780,
+          "longitude": -63.187145
+        },
+        "nivel_bateria": 15
+      },
+      {
+        "ID":"5",
+        "placa": "LETY2424",
+        "localizacao": {
+          "latitude": -72.902780,
+          "longitude": -63.187145
+        },
+        "nivel_bateria": 20
       }
     ]
-  }
+}
   

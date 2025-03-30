@@ -3,7 +3,7 @@ FROM golang:1.21
 WORKDIR /app 
 #Copia main.go e dados.json para o contêiner
 COPY main.go .
-COPY dados.json .
+#COPY dados.json .
 # Compila o servidor
 RUN go build -o server main.go
 # expõe a porta 8080 para conexões TCP

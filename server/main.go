@@ -3,36 +3,71 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-
-	//"io/ioutil"
 	"net"
 	"os"
 	"strings"
 )
 
-// Estrutura para armazenar dados
-type Data struct {
-	Veiculos        []string `json:"veiculos"`
-	PontosDeRecarga []string `json:"pontos_de_recarga"`
+// Definindo estrutura com os dados dos veiculos
+var dados Dados
+
+type Localizacao struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }
 
-func carregarDados() Data {
-	file, err := os.ReadFile("data.json")
+type Veiculo struct {
+	Id           string      `json:"ID"`
+	Placa        string      `json:"placa"`
+	Localizacao  Localizacao `json:"localizacao"`
+	NivelBateria int         `json:"nivel_bateria"`
+}
+
+type PontoRecarga struct {
+	Nome      string
+	Latitude  float64
+	Longitude float64
+}
+
+type Dados struct {
+	Veiculos []Veiculo `json:"veiculos"`
+	Pontos   []PontoRecarga 
+}
+
+
+
+func lerArquivoJson() {
+
+	// Ler o arquivo JSON usando os.ReadFile
+	bytes, err := os.ReadFile("dados/dadosVeiculos.json")
 	if err != nil {
-		fmt.Println("Erro ao ler JSON:", err)
-		return Data{}
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
 	}
-	var data Data
-	json.Unmarshal(file, &data)
-	return data
+
+	// Passando dados do JSON para struct criada dados
+	err = json.Unmarshal(bytes, &dados)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
 }
 
-func salvarDados(data Data) {
-	file, _ := json.MarshalIndent(data, "", "  ")
-	os.WriteFile("data.json", file, 0644)
+func getVeiculo(id string) (Veiculo, bool){
+	var veiculoFinal Veiculo 	// Estrutura de dados do veiculo
+	controle := false
+
+	for _, veiculo := range dados.Veiculos {
+		if veiculo.Id == id {
+			veiculoFinal = veiculo
+			controle = true
+		}
+	}
+	return veiculoFinal, controle
 }
 
-func handleConnection(conn net.Conn) {
+
+func handleConnection(conn net.Conn) { //conn -> conexão
 	defer conn.Close()
 
 	//criando buffer para receber dados/mensagens da nossa conexão
@@ -47,26 +82,37 @@ func handleConnection(conn net.Conn) {
 	mensagem := strings.TrimSpace(string(buffer[:n]))
 	fmt.Println("Recebido:", mensagem)
 
-	//define mensagem
-	/*mensagem = fmt.Sprintln("oi helena")
-	_, err = conn.Write([]byte(mensagem))
-	if err != nil {
-		fmt.Println("Erro ao enviar mensagem:", err)
+	//Verificar se a mensagem é do veiculo/ponto (essa sinalização é feia antes da virgula)
+	partes := strings.Split(mensagem, ",") // Divide a string recebida 
+	tipo := partes[0] //sinaliza se a mensagem é do veiculo ou do ponto
+	id := partes[1]
+	requisicao := partes[2]
+
+	// Lendo a variável de ambiente do docker compose para pegar o ID do veiculo
+	veiculoID := os.Getenv("ID-VEICULO")
+	if veiculoID == "" {
+		fmt.Println("Erro: ID-VEICULO não definido")
 		return
-	}*/
+	}
 
-	//dados := carregarDados()
-	//if strings.HasPrefix(mensagem, "VEICULO:") {
-	//	id := strings.Split(mensagem, ":")[1]
-	//	dados.Veiculos = append(dados.Veiculos, id)
-	//	fmt.Println("Veículo registrado:", id)
-	//} else if strings.HasPrefix(mensagem, "PONTO:") {
-	//	id := strings.Split(mensagem, ":")[1]
-	//	dados.PontosDeRecarga = append(dados.PontosDeRecarga, id)
-	//	fmt.Println("Ponto de recarga registrado:", id)
-	//}
+	if(tipo == "veiculo"){ //se for veiculo
+		if(veiculoID == id){
 
-	//salvarDados(dados)
+			veiculoEncontrado, controle := getVeiculo(veiculoID)
+			if(controle){
+				fmt.Println("A placa do Veiculo com bateria baixa é:", veiculoEncontrado)
+			} else {
+				fmt.Println("Veículo não encontrado com ID:", veiculoID)
+			}
+
+			if(requisicao == "bb") { //se a requisição for do tipo bateria baixa
+				
+
+			}
+		}
+
+	}
+
 }
 
 func main() {
@@ -90,7 +136,7 @@ func main() {
 
 		//O uso de go antes da chamada cria uma goroutine, ou seja, executa a função de forma assíncrona
 		//Ou seja, criamos uma thread
-		//Isso permite que o servidor continue aceitando novas conexões sem precisar esperar o
+		//Isso permite que o servidor continue aceitando novas conexões sem precisar esperar o 
 		//processamento de uma conexão terminar
 		go handleConnection(conn) //passa a conxeão para nossa função
 	}
