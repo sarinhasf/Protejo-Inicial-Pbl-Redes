@@ -1,13 +1,10 @@
 FROM golang:1.21
-
 WORKDIR /app
 
 # Copiar os arquivos necessários para dentro do container
-COPY main.go .
-#COPY ../dados/dadosVeiculos.json .
-#COPY ../dados/MapaDeFeira.csv .
-
-RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/MapaDeFeira.csv ./MapaDeFeira.csv
+COPY veiculo.go .
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.json
-RUN go build -o veiculo main.go
+RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/MapaDeFeira.csv ./MapaDeFeira.csv
+RUN go build -o veiculo veiculo.go
 CMD ["./veiculo"]
+

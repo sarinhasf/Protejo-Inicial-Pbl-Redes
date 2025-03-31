@@ -28,7 +28,6 @@ type Localizacao struct {
 }
 
 type Veiculo struct {
-	Id           string      `json:"ID"`
 	Placa        string      `json:"placa"`
 	Localizacao  Localizacao `json:"localizacao"`
 	NivelBateria int         `json:"nivel_bateria"`
@@ -39,7 +38,7 @@ type Dados struct {
 }
 
 // lÊ arquivo csv
-// Retorna um slice de pontos e um erro (Se tiver erro)
+// Retorna um slice de pontos e um erro
 func readPolygon(filename string) ([]Point, error) {
 	file, err := os.Open(filename) //abre o arquivo
 	if err != nil {
@@ -59,8 +58,6 @@ func readPolygon(filename string) ([]Point, error) {
 	rawData := records[1][0]
 	rawData = strings.TrimPrefix(rawData, "POLYGON ((")
 	rawData = strings.TrimSuffix(rawData, "))")
-
-	//Este polígono representa uma área geográfica válida onde os veículos podem estar
 
 	var polygon []Point                    //cria um slice de pontos
 	coords := strings.Split(rawData, ", ") //separa as coordenadas por vírgula
@@ -125,11 +122,9 @@ func isPointInsidePolygon(point Point, polygon []Point) bool {
 	return inside
 }
 
-// Ler os dados do veiculo
-func lerArquivoJson() {
-
+func leArquivoJson() {
 	// Ler o arquivo JSON usando os.ReadFile
-	bytes, err := os.ReadFile("/dados/dadosVeiculos.json")
+	bytes, err := os.ReadFile("dadosVeiculos.json")
 	if err != nil {
 		fmt.Println("Erro ao abrir arquivo JSON:", err)
 		return
@@ -143,24 +138,10 @@ func lerArquivoJson() {
 	}
 }
 
-// Função para salvar o JSON atualizado
-func salvarArquivoJson() error {
-	//dados -> é uma variavel global
-	bytes, err := json.MarshalIndent(dados, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile("/dados/dadosVeiculos.json", bytes, 0644) //0644 é a permissão para alterar o nosso json
-	return err
-}
-
 func main() {
-	//ler os dados do veiculo
-	lerArquivoJson()
+	leArquivoJson()
 
-	//coordenadas do mapa de feira
-	polygon, err := readPolygon("/dados/MapaDeFeira.csv")
+	polygon, err := readPolygon("MapaDeFeira.csv")
 	if err != nil {
 		fmt.Println("Erro ao ler arquivo CSV:", err)
 		return
@@ -171,25 +152,7 @@ func main() {
 		return
 	}
 
-	// Atualiza coordenadas de todos veiculos do arquivo json (para ser sempre rondomico)
-	for i := range dados.Veiculos {
-		randomCoord := randomPointInBoundingBox(polygon)
-		dados.Veiculos[i].Localizacao.Latitude = randomCoord.Latitude
-		dados.Veiculos[i].Localizacao.Longitude = randomCoord.Longitude
-	}
-
-	// Salva o JSON atualizado
-	err = salvarArquivoJson()
-	if err != nil {
-		fmt.Println("Erro ao salvar arquivo JSON:", err)
-		return
-	}
-	fmt.Println("Arquivo JSON atualizado com sucesso!")
-
-	// Ler novamente o arquivo json para pegar as coordenadas atualizadas dos veiculos
-	//lerArquivoJson()
-
-	//Faz conexão com a nossa porta
+	//Faz conexão
 	//conn -> representa nossa conexão/rede
 	conn, err := net.Dial("tcp", "server:8080")
 	if err != nil {
@@ -198,39 +161,26 @@ func main() {
 	}
 	defer conn.Close()
 
-	// Lendo a variável de ambiente do docker compose (ID) para atrelar dados do json para cada conteiner
-	veiculoID := os.Getenv("ID-VEICULO")
-	if veiculoID == "" {
-		fmt.Println("Erro: ID-VEICULO não definido")
-		return
-	}
-
 	for _, veiculo := range dados.Veiculos {
-		if veiculo.Id == veiculoID {
-			if veiculo.NivelBateria <= 20 {
-				//estrutura da mensagem: quem enviou + id + qual tipo de requisição
-				//bb -> bateria baixa
-				mensagem := "veiculo," + veiculo.Id + ",bb"                                //passa pro servidor informando que é um veiculo + o ID do veiculo
-				fmt.Println("VEICULO " + veiculo.Placa + " com nível de bateria critico!") //envia mensagem ao servidor
-				//manda o ID do veículo
-				conn.Write([]byte(mensagem))
+		if veiculo.NivelBateria <= 30 {
+			randomCoord := randomPointInBoundingBox(polygon)
+			//define mensagem
+			mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
+				veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
+			fmt.Println("Veículo enviado ao servidor:", mensagem)
+			_, err := conn.Write([]byte(mensagem)) //envia mensagem
+			if err != nil {
+				fmt.Println("Erro ao enviar mensagem:", err)
+				return
 			}
+
+			//reader := bufio.NewReader(conn)          //cria um leitor de dados
+			//response, err := reader.ReadString('\n') //lê a resposta do servidor
+			/*if err != nil {
+				fmt.Println("Erro ao ler resposta do servidor:", err)
+				return
+			}
+			fmt.Println("Resposta do servidor:", response)*/
 		}
-
 	}
-
-	//for _, veiculo := range dados.Veiculos {
-	//if veiculo.NivelBateria <= 20 {
-	//randomCoord := randomPointInBoundingBox(polygon)
-	//define mensagem
-	//mensagem := fmt.Sprintf("VEICULO %s - Bateria: %d%% - Latitude: %f, Longitude: %f\n",
-	//veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
-	//fmt.Println("Veículo enviado ao servidor:", mensagem) //envia mensagem
-	//_, err := conn.Write([]byte(mensagem))
-	//if err != nil {
-	//fmt.Println("Erro ao enviar mensagem:", err)
-	//return
-	//}
-	//}
-	//}
 }

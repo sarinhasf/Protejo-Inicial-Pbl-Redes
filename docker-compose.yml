@@ -7,73 +7,75 @@ services:
     volumes:
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
 
-  veiculo1:
+  veiculo:
     build: ./veiculo
-    container_name: veiculo1
+    container_name: veiculo
     depends_on:
       - server
-    environment:
-      - ID-VEICULO=1
+    #environment:
+    #  - ID-VEICULO=1
     volumes:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
 
-  veiculo2:
-    build: ./veiculo
-    container_name: veiculo2
-    depends_on:
-      - server
-    environment:
-      - ID-VEICULO=2
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  #veiculo2:
+   # build: ./veiculo
+    #container_name: veiculo2
+    #depends_on:
+     # - server
+    #environment:
+    #  - ID-VEICULO=2
+    #volumes:
+     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
 
-  veiculo3:
-    build: ./veiculo
-    container_name: veiculo3
-    depends_on:
-      - server
-    environment:
-      - ID-VEICULO=3
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  #veiculo3:
+  #  build: ./veiculo
+   # container_name: veiculo3
+    #depends_on:
+     # - server
+    #environment:
+    #  - ID-VEICULO=3
+    #volumes:
+     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
 
-  veiculo4:
-    build: ./veiculo
-    container_name: veiculo4
-    depends_on:
-      - server
-    environment:
-      - ID-VEICULO=4
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  #veiculo4:
+  #  build: ./veiculo
+   # container_name: veiculo4
+    #depends_on:
+     # - server
+    #environment:
+    #  - ID-VEICULO=4
+    #volumes:
+     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
 
-  veiculo5:
-    build: ./veiculo
-    container_name: veiculo5
-    depends_on:
-      - server
-    environment:
-      - ID-VEICULO=5
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  #veiculo5:
+   # build: ./veiculo
+    #container_name: veiculo5
+    #depends_on:
+     # - server
+    #environment:
+    #  - ID-VEICULO=5
+    #volumes:
+     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
   
-  ponto1:
+  ponto:
     build: ./ponto
-    container_name: ponto1
+    container_name: ponto
     depends_on:
       - server
-    environment:
-      - ID-PONTO=1
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+    #environment:
+    #  - ID-PONTO=1
 
-  ponto2:
-    build: ./ponto
-    container_name: ponto2
-    depends_on:
-      - server
-    environment:
-      - ID-PONTO=2
+  #ponto2:
+   # build: ./ponto
+    #container_name: ponto2
+    #depends_on:
+     # - server
+    #environment:
+    #  - ID-PONTO=2
