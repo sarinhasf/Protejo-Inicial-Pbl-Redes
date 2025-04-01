@@ -12,8 +12,8 @@ services:
     container_name: veiculo
     depends_on:
       - server
-    #environment:
-    #  - ID-VEICULO=1
+    environment:
+      - PLACA=NAY00235
     volumes:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json

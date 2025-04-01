@@ -152,6 +152,13 @@ func main() {
 		return
 	}
 
+	// Lendo a variável de ambiente do docker compose
+	veiculoID := os.Getenv("PLACA")
+	if veiculoID == "" {
+		fmt.Println("Erro: PLACA não definida")
+		return
+	}
+
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
 	conn, err := net.Dial("tcp", "server:8080")
@@ -162,7 +169,7 @@ func main() {
 	defer conn.Close()
 
 	for _, veiculo := range dados.Veiculos {
-		if veiculo.NivelBateria <= 30 {
+		if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
 			randomCoord := randomPointInBoundingBox(polygon)
 			//define mensagem
 			mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
