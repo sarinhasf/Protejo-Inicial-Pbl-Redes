@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"bufio"         //pacote para leitura de dados
+	"time"
 	"encoding/csv"  //pacote para manipulação de CSV
 	"encoding/json" //pacote para manipulação de JSON
 	"fmt"           //pacote para formatação de strings
@@ -14,6 +14,8 @@ import (
 
 // Definindo estrutura com os dados dos veiculos
 var dados Dados
+var veiculoID string
+var polygon []Point
 
 // struct para armazenar coordenadas
 type Point struct {
@@ -166,28 +168,27 @@ func main() {
 		fmt.Println("Erro ao conectar ao servidor:", err)
 		return
 	}
-	defer conn.Close()
 
-	for _, veiculo := range dados.Veiculos {
-		if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
-			randomCoord := randomPointInBoundingBox(polygon)
-			//define mensagem
-			mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
-				veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
-			fmt.Println("Veículo enviado ao servidor:", mensagem)
-			_, err := conn.Write([]byte(mensagem)) //envia mensagem
-			if err != nil {
-				fmt.Println("Erro ao enviar mensagem:", err)
-				return
-			}
+	for { //criando for infinito para manter conexão
 
-			//reader := bufio.NewReader(conn)          //cria um leitor de dados
-			//response, err := reader.ReadString('\n') //lê a resposta do servidor
-			/*if err != nil {
-				fmt.Println("Erro ao ler resposta do servidor:", err)
-				return
+		for _, veiculo := range dados.Veiculos {
+			if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
+				randomCoord := randomPointInBoundingBox(polygon)
+				//define mensagem
+				mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
+					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
+				fmt.Println("Veículo enviado ao servidor:", mensagem)
+
+				_, err := conn.Write([]byte(mensagem)) //envia mensagem
+				if err != nil {
+					fmt.Println("Erro ao enviar mensagem:", err)
+					return
+				}
 			}
-			fmt.Println("Resposta do servidor:", response)*/
 		}
+
+		time.Sleep(1 * time.Minute)
+
 	}
+
 }

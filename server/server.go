@@ -77,7 +77,6 @@ type Dados struct {
 }*/
 
 func handleConnection(conn net.Conn) {
-	defer conn.Close()
 	bufferAcumulado := "" // buffer para armazenar dados recebidos
 	/*o buffer de leitura pode conter múltiplas mensagens concatenadas em uma única leitura.
 	Isso acontece porque o protocolo TCP é baseado em streams, e não em mensagens discretas.
@@ -89,6 +88,7 @@ func handleConnection(conn net.Conn) {
 	*/
 
 	for { // loop infinito para receber mensagens continuamente
+
 		//criando buffer para receber dados/mensagens da nossa conexão
 		buffer := make([]byte, 1024)
 		n, err := conn.Read(buffer) //n -> número de bytes lidos
@@ -192,6 +192,8 @@ func handleConnection(conn net.Conn) {
 			}
 		}
 		bufferAcumulado = mensagens[len(mensagens)-1] // limpa o buffer
+		//defer conn.Close()
+
 	}
 }
 

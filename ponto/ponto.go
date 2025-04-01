@@ -104,7 +104,7 @@ func main() {
 		fmt.Println("Erro ao conectar ao servidor:", err)
 		return
 	}
-	defer conn.Close()
+	//defer conn.Close()
 
 	//Envia mensagem
 	mensagem := "PONTO DE RECARGA CONECTADO\n " //tem que terminar com \n se não o servidor não processa
