@@ -69,8 +69,8 @@ services:
       - server
     volumes:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-    #environment:
-    #  - ID-PONTO=1
+    environment:
+      - ID-PONTO=1
 
   #ponto2:
    # build: ./ponto

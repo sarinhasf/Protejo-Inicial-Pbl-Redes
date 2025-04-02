@@ -1,7 +1,6 @@
 package main
 
 import (
-	"time"
 	"encoding/csv"  //pacote para manipulação de CSV
 	"encoding/json" //pacote para manipulação de JSON
 	"fmt"           //pacote para formatação de strings
@@ -10,6 +9,7 @@ import (
 	"os"            //pacote para manipulação de arquivos
 	"strconv"       //conversão de tipos
 	"strings"       //manipulação de strings
+	"time"
 )
 
 // Definindo estrutura com os dados dos veiculos
@@ -178,6 +178,7 @@ func main() {
 				mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
 					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
 				fmt.Println("Veículo enviado ao servidor:", mensagem)
+				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
 
 				_, err := conn.Write([]byte(mensagem)) //envia mensagem
 				if err != nil {

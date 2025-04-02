@@ -1,0 +1,70 @@
+{
+    "pontos": [
+      { 
+        "ID":"1",
+        "nome": "Nóide",
+        "fila": []
+      },
+      { 
+        "ID":"2",
+        "nome": "Naylane",
+        "fila": []
+      },
+      { 
+        "ID":"3",
+        "nome": "Sara",
+        "fila": []
+      },
+      { 
+        "ID":"4",
+        "nome": "Leticia",
+        "fila": []
+      },
+      { 
+        "ID":"5",
+        "nome": "Helena",
+        "fila": []
+      },
+      { 
+        "ID":"6",
+        "nome": "Brendinha",
+        "fila": []
+      },
+      { 
+        "ID":"7",
+        "nome": "DA Ecomp",
+        "fila": []
+      },
+      { 
+        "ID":"8",
+        "nome": "Praça do Nordestino",
+        "fila": []
+      },
+      { 
+        "ID":"9",
+        "nome": "Feiraguay",
+        "fila": []
+      },
+      { 
+        "ID":"10",
+        "nome": "Shopping",
+        "fila": []
+      },
+      { 
+        "ID":"12",
+        "nome": "Getúlio",
+        "fila": []
+      },
+      { 
+        "ID":"13",
+        "nome": "BR",
+        "fila": []
+      },
+      { 
+        "ID":"13",
+        "nome": "Eu amo Feira",
+        "fila": []
+      }
+    ]
+}
+  

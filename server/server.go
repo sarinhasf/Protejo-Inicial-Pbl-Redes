@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -181,16 +182,17 @@ func handleConnection(conn net.Conn) {
 					novasConns = append(novasConns, pontoConn)
 				}
 				pontosConns = novasConns
+
 			} else if strings.HasPrefix(mensagem, "PONTO") { //
-				//mu.Lock()
+				time.Sleep(3 * time.Second)             //espera alguns segundos antes de enviar de fato a mensagem
 				pontosConns = append(pontosConns, conn) // lista para armazenar as conexões dos pontos
-				//mu.Unlock()
 				fmt.Println("Novo ponto de recarga conectado!")
-				// Não fecha a conexão
-			} else {
-				fmt.Println("Mensagem recebida:", mensagem)
+			
+				} else {
+				fmt.Print("Aguardando nova requisção dos veiculos.\n\n")
 			}
 		}
+		
 		bufferAcumulado = mensagens[len(mensagens)-1] // limpa o buffer
 		//defer conn.Close()
 
@@ -206,7 +208,7 @@ func main() {
 	}
 	defer listener.Close()
 
-	fmt.Println("Servidor rodando na porta 8080...")
+	fmt.Print("Servidor rodando na porta 8080...\n\n")
 
 	for {
 		//conn -> conexão TCP

@@ -108,26 +108,28 @@ func main() {
 
 	//Envia mensagem
 	mensagem := "PONTO DE RECARGA CONECTADO\n " //tem que terminar com \n se não o servidor não processa
+	fmt.Println("Registro de Ponto de recarga enviado ao servidor:", mensagem)
+
 	_, error := conn.Write([]byte(mensagem))
 	if error != nil {
 		fmt.Println("Erro ao enviar mensagem de registro ao servidor:", err)
 		return
 	}
-	fmt.Println("Registro de Ponto de recarga enviado ao servidor:", mensagem)
 
 	reader := bufio.NewReader(conn)
-	for {
+
+	for { //faz for infinito para manter a conexão
 		fmt.Println("Aguardando servidor enviar coordenadas do veículo...")
+
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("Erro ao ler mensagem do servidor:", err)
 			break
 		}
-		fmt.Println("Mensagem recebida do servidor:", input)
+		//fmt.Println("Mensagem recebida do servidor:", input)
 
-		//confirma que recebeu as cordenadas
 		input = strings.TrimSpace(input)
-		fmt.Println("Coordenadas recebidas:", input)
+		//fmt.Println("Coordenadas recebidas:", input)
 
 		// Envia confirmação ao servidor
 		/*message := "CONFIRMACAO PONTO recebeu coordenadas do veículo"
@@ -143,7 +145,7 @@ func main() {
 			fmt.Println("Mensagem inválida do servidor:", input)
 			continue
 		}
-		fmt.Println("Coordenadas recebidas:", parts[0], parts[1])
+		fmt.Println("Coordenadas recebidas do Servidor:", parts[0], parts[1])
 
 		lat, err1 := strconv.ParseFloat(parts[0], 64)
 		lon, err2 := strconv.ParseFloat(parts[1], 64)
@@ -152,17 +154,18 @@ func main() {
 			fmt.Println("Erro ao converter coordenadas:", err1, err2)
 			continue
 		}
-		fmt.Println("Coordenadas convertidas:", lat, lon)
+		//fmt.Println("Coordenadas convertidas:", lat, lon)
 
 		closestPoint := findClosestPoint(lat, lon, points)
 		message := fmt.Sprintf("Ponto de recarga mais próximo: %s\n", closestPoint.Nome)
 
 		fmt.Println("Enviando resposta ao servidor:", message)
+		time.Sleep(3 * time.Second) //espera um tempo para printar e depois enviar as mensagens
+
 		_, err = conn.Write([]byte(message))
 		if err != nil {
 			fmt.Println("Erro ao enviar mensagem ao servidor:", err)
 			break
 		}
-		time.Sleep(3 * time.Second)
 	}
 }
