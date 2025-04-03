@@ -3,67 +3,80 @@
       { 
         "ID":"1",
         "nome": "Nóide",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"2",
         "nome": "Naylane",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"3",
         "nome": "Sara",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"4",
         "nome": "Leticia",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"5",
         "nome": "Helena",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"6",
         "nome": "Brendinha",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"7",
         "nome": "DA Ecomp",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"8",
         "nome": "Praça do Nordestino",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"9",
         "nome": "Feiraguay",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"10",
         "nome": "Shopping",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"12",
         "nome": "Getúlio",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"13",
         "nome": "BR",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       },
       { 
         "ID":"13",
         "nome": "Eu amo Feira",
-        "fila": []
+        "fila": [],
+        "carregando": " "
       }
     ]
 }

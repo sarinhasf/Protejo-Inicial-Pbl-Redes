@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     volumes:
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
 
   veiculo:
     build: ./veiculo

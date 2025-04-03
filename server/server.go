@@ -1,23 +1,21 @@
 package main
 
 import (
-	//"encoding/json"
 	"fmt"
-	//"sync"
-
-	//"io/ioutil"
 	"net"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+	"encoding/json" //pacote para manipulação de JSON
+
 )
 
-var (
-	dados       Dados
-	pontosConns []net.Conn // Lista de conexões dos pontos de recarga
-	//mu          sync.Mutex // Mutex para evitar concorrência
 
+var (
+	dadosVeiculos       DadosVeiculos
+	dadosPontos         DadosPontos
+	pontosConns []net.Conn // Lista de conexões dos pontos de recarga
 )
 
 type Location struct {
@@ -32,32 +30,20 @@ type Veiculo struct {
 	BateryLevel int      `json:"batery_level"`
 }
 
-type PontoDeRecarga struct {
-	Nome      string
-	Latitude  float64
-	Longitude float64
+type PontoRecarga struct {
+	Id		   string
+	Nome       string
+	Fila 	   []string
+	Carregando string
 }
 
-type Dados struct {
+type DadosVeiculos struct {
 	Veiculos []Veiculo        `json:"veiculos"`
-	Pontos   []PontoDeRecarga `json:"pontos_de_recarga"`
 }
 
-/*func leArquivoJson() {	// não está sendo utilizado
-	// Le o arquivo JSON usando os.ReadFile
-	bytes, err := os.ReadFile("dados.json")
-	if err != nil {
-		fmt.Println("Erro ao abrir arquivo JSON:", err)
-		return
-	}
-
-	// Passando dados do JSON para struct criada
-	err = json.Unmarshal(bytes, &dados)
-	if err != nil {
-		fmt.Println("Erro ao decodificar JSON:", err)
-		return
-	}
-}*/
+type DadosPontos struct {
+	Pontos []PontoRecarga        `json:"pontos"`
+}
 
 /*func getVeiculo(id string) (Veiculo, bool){
 	var veiculoFinal Veiculo
@@ -79,14 +65,6 @@ type Dados struct {
 
 func handleConnection(conn net.Conn) {
 	bufferAcumulado := "" // buffer para armazenar dados recebidos
-	/*o buffer de leitura pode conter múltiplas mensagens concatenadas em uma única leitura.
-	Isso acontece porque o protocolo TCP é baseado em streams, e não em mensagens discretas.
-	Portanto, o servidor pode receber várias mensagens de uma só vez,
-	sem separá-las automaticamente.
-	Aqui, estava acontecendo de múltiplas mensagens serem tratadas como uma única string
-	porque o código não está separando corretamente as mensagens individuais antes de processá-las.
-	por isso esse bufferAcumulado
-	*/
 
 	for { // loop infinito para receber mensagens continuamente
 
@@ -163,7 +141,7 @@ func handleConnection(conn net.Conn) {
 					BateryLevel: bateriaInt,
 				}
 
-				dados.Veiculos = append(dados.Veiculos, novoVeiculo) // adiciona o novo veículo à lista de veículos
+				dadosVeiculos.Veiculos = append(dadosVeiculos.Veiculos, novoVeiculo) // adiciona o novo veículo à lista de veículos
 				/*fmt.Println("Veículos armazenados atualmente:")
 				for _, veiculo := range dados.Veiculos {
 					fmt.Printf(" | %s | %d%% | %.6f | %.6f |\n", veiculo.Placa, veiculo.BateryLevel, veiculo.Location.Latitude, veiculo.Location.Longitude)
@@ -199,7 +177,46 @@ func handleConnection(conn net.Conn) {
 	}
 }
 
+func leArquivoJson() {
+	bytes, err := os.ReadFile("dadosPontos.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dadosPontos)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
+}
+
+func addFila(idPonto string, idCarro string){
+	for _, ponto := range dadosPontos.Pontos {
+		if(ponto.Id == idPonto){
+			ponto.Fila = append(ponto.Fila, idPonto)
+		}
+	}
+}
+
+func removeFila(idPonto string, idCarro string) {
+	for i, ponto := range dadosPontos.Pontos {
+		if ponto.Id == idPonto {
+			for j, carro := range ponto.Fila {
+				if carro == idCarro {
+					// Remove o carro da fila
+					dadosPontos.Pontos[i].Fila = append(ponto.Fila[:j], ponto.Fila[j+1:]...)
+					return
+				}
+			}
+		}
+	}
+}
+
+
 func main() {
+	leArquivoJson(); //lendo os arquivos do ponto
+
 	//Verificação se o servidor iniciou corretamente
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {

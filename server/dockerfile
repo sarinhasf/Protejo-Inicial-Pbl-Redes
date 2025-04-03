@@ -5,6 +5,8 @@ WORKDIR /app
 COPY server.go .
 
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.json
+RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosPontos.json ./dadosPontos.json
+
 # Compila o servidor
 RUN go build -o server server.go
 # expõe a porta 8080 para conexões TCP
