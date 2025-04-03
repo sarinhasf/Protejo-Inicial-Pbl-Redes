@@ -58,11 +58,6 @@ type DadosPontos struct {
 	return veiculoFinal, controle
 }*/
 
-/*func salvarDados(data Data) {
-	file, _ := json.MarshalIndent(data, "", "  ")
-	os.WriteFile("data.json", file, 0644)
-}*/
-
 func handleConnection(conn net.Conn) {
 	bufferAcumulado := "" // buffer para armazenar dados recebidos
 
@@ -211,6 +206,11 @@ func removeFila(idPonto string, idCarro string) {
 			}
 		}
 	}
+}
+
+func salvarDados(data DadosPontos) {
+	file, _ := json.MarshalIndent(data, "", "  ")
+	os.WriteFile("dadosPontos.json", file, 0644)
 }
 
 
