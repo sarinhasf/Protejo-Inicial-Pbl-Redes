@@ -2,15 +2,15 @@ FROM golang:1.21
 #Criação do diretorio 
 WORKDIR /app 
 #Copia server.go para o contêiner
-COPY server.go .
+COPY . .
 
+RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/MapaDeFeira.csv ./MapaDeFeira.csv
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.json
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosPontos.json ./dadosPontos.json
 
 # Compila o servidor
-RUN go build -o server server.go
+RUN go build -o server server.go findNearestPoint.go trataInfoVeiculo.go
 # expõe a porta 8080 para conexões TCP
 EXPOSE 8080
 #Quando o contêiner inicia, executa ./server para rodar o servidor
-RUN go build -o server server.go
 CMD ["./server"]

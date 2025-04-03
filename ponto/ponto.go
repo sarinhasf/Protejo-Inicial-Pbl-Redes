@@ -1,15 +1,16 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	"encoding/csv"
 	"fmt"
-	"math"
+
+	//"math"
 	"net"
 	"os"
 	"strconv"
 	"strings"
-	"time"
+	//"time"
 )
 
 // struct para armazenar os pontos de recarga
@@ -56,46 +57,13 @@ func readChargingPoints(filename string) ([]ChargePoint, error) {
 	return chargePoints, nil
 }
 
-func calculateDistance(lat1, lon1, lat2, lon2 float64) float64 {
-	const R = 6378 // raio da Terra em metros
-
-	// Converte coordenadas para radianos
-	lat1Rad, lon1Rad := lat1*math.Pi/180, lon1*math.Pi/180
-	lat2Rad, lon2Rad := lat2*math.Pi/180, lon2*math.Pi/180
-	// Diferença de latitude e longitude
-	dlat := lat2Rad - lat1Rad
-	dlon := lon2Rad - lon1Rad
-
-	// Fórmula de Haversine para calcular a distância entre dois pontos
-	// https://en.wikipedia.org/wiki/Haversine_formula
-	a := math.Sin(dlat/2)*math.Sin(dlat/2) + math.Cos(lat1Rad)*math.Cos(lat2Rad)*math.Sin(dlon/2)*math.Sin(dlon/2) // Sen²((lat2 - lat1) / 2) + cos(lat1) * cos(lat2) * sen²((lon2 - lon1) / 2)
-	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))                                                              // 2 * atan2(sqrt(a), sqrt(1 - a))
-	// c representa o fator de escala para calcular a distância entre dois pontos usando a fórmula de Haversine
-
-	return R * c
-}
-
-func findClosestPoint(lat, lon float64, points []ChargePoint) ChargePoint {
-	var closestPoint ChargePoint
-	minDistance := math.MaxFloat64
-
-	for _, point := range points {
-		distance := calculateDistance(lat, lon, point.Latitude, point.Longitude)
-		if distance < minDistance {
-			minDistance = distance
-			closestPoint = point
-		}
-	}
-	return closestPoint
-}
-
 func main() {
 	//lê os pontos de recarga do arquivo csv
-	points, err := readChargingPoints("MapaDeFeira.csv")
+	/*points, err := readChargingPoints("MapaDeFeira.csv")
 	if err != nil {
 		fmt.Println("Error reading csv:", err)
 		return
-	}
+	}*/
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
@@ -108,7 +76,7 @@ func main() {
 
 	//Envia mensagem
 	mensagem := "PONTO DE RECARGA CONECTADO\n " //tem que terminar com \n se não o servidor não processa
-	fmt.Println("Registro de Ponto de recarga enviado ao servidor:", mensagem)
+	fmt.Println("Registro de Ponto de recarga conectado ao servidor:", mensagem)
 
 	_, error := conn.Write([]byte(mensagem))
 	if error != nil {
@@ -116,56 +84,4 @@ func main() {
 		return
 	}
 
-	reader := bufio.NewReader(conn)
-
-	for { //faz for infinito para manter a conexão
-		fmt.Println("Aguardando servidor enviar coordenadas do veículo...")
-
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Erro ao ler mensagem do servidor:", err)
-			break
-		}
-		//fmt.Println("Mensagem recebida do servidor:", input)
-
-		input = strings.TrimSpace(input)
-		//fmt.Println("Coordenadas recebidas:", input)
-
-		// Envia confirmação ao servidor
-		/*message := "CONFIRMACAO PONTO recebeu coordenadas do veículo"
-		_, err = conn.Write([]byte(message))
-		if err != nil {
-			fmt.Println("Erro ao enviar confirmação:", err)
-			return
-		}
-		fmt.Println("Mensagem enviada ao servidor:", message)*/
-
-		parts := strings.Split(input, ",")
-		if len(parts) != 2 {
-			fmt.Println("Mensagem inválida do servidor:", input)
-			continue
-		}
-		fmt.Println("Coordenadas recebidas do Servidor:", parts[0], parts[1])
-
-		lat, err1 := strconv.ParseFloat(parts[0], 64)
-		lon, err2 := strconv.ParseFloat(parts[1], 64)
-		// Verifica se houve erro na conversão
-		if err1 != nil || err2 != nil {
-			fmt.Println("Erro ao converter coordenadas:", err1, err2)
-			continue
-		}
-		//fmt.Println("Coordenadas convertidas:", lat, lon)
-
-		closestPoint := findClosestPoint(lat, lon, points)
-		message := fmt.Sprintf("Ponto de recarga mais próximo: %s\n", closestPoint.Nome)
-
-		fmt.Println("Enviando resposta ao servidor:", message)
-		time.Sleep(3 * time.Second) //espera um tempo para printar e depois enviar as mensagens
-
-		_, err = conn.Write([]byte(message))
-		if err != nil {
-			fmt.Println("Erro ao enviar mensagem ao servidor:", err)
-			break
-		}
-	}
 }
