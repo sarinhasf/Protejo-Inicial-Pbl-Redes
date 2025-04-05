@@ -20,6 +20,8 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/dadosPontos.json:/app/dadosPontos.json
+    stdin_open: true
+    tty: true
 
   #veiculo2:
    # build: ./veiculo

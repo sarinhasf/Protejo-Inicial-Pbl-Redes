@@ -11,13 +11,16 @@ import (
 
 // struct para armazenar os pontos de recarga
 type ChargePoint struct {
+	Id        string
 	Latitude  float64
 	Longitude float64
 	Nome      string
 }
 
 func readChargingPoints(filename string) ([]ChargePoint, error) {
-	file, err := os.Open(filename) // abre o arquivo
+	leArquivoJson()
+
+	file, err := os.Open(filename) // abre o arquivo CSV
 	if err != nil {
 		return nil, err
 	}
@@ -45,11 +48,21 @@ func readChargingPoints(filename string) ([]ChargePoint, error) {
 
 			lat, _ := strconv.ParseFloat(parts[1], 64)
 			lon, _ := strconv.ParseFloat(parts[0], 64)
-			nome := records[i][1]
+			id := records[i][1]
 
-			chargePoints = append(chargePoints, ChargePoint{Latitude: lat, Longitude: lon, Nome: nome})
+			chargePoints = append(chargePoints, ChargePoint{
+				Id:        id,
+				Latitude:  lat,
+				Longitude: lon,
+			})
+
 		}
 	}
+
+	for _, ponto := range chargePoints {
+		fmt.Printf(" | %s | %.6f | %.6f |\n", ponto.Id, ponto.Latitude, ponto.Longitude)
+	}
+
 	return chargePoints, nil
 }
 
