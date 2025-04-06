@@ -74,6 +74,8 @@ services:
       - server
     volumes:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/contasUsuarios.json:/app/contasUsuarios.json
     environment:
       - ID-PONTO=1
 

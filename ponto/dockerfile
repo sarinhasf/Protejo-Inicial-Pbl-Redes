@@ -3,5 +3,6 @@ WORKDIR /app
 COPY ponto.go .
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/MapaDeFeira.csv ./MapaDeFeira.csv
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.json
+RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/contasUsuarios.json ./contasUsuarios.json
 RUN go build -o ponto ponto.go
 CMD ["./ponto"]

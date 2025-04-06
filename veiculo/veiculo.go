@@ -11,8 +11,6 @@ import (
 
 // Definindo estrutura com os dados dos veiculos
 var dados Dados
-//var veiculoID string
-//var polygon []Point
 
 // struct para armazenar coordenadas
 type Point struct {
