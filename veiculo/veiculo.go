@@ -11,8 +11,8 @@ import (
 
 // Definindo estrutura com os dados dos veiculos
 var dados Dados
-var veiculoID string
-var polygon []Point
+//var veiculoID string
+//var polygon []Point
 
 // struct para armazenar coordenadas
 type Point struct {
@@ -96,8 +96,8 @@ func main() {
 				//	veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
 				mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
 					veiculo.Placa, veiculo.NivelBateria, -12.260784, -38.980637)
-				//fmt.Println(mensagem)
-				fmt.Println("Veículo enviado ao servidor:", mensagem)
+				fmt.Println(mensagem)
+				//fmt.Println("Veículo enviado ao servidor:", mensagem)
 				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
 
 				_, err := conn.Write([]byte(mensagem)) //envia mensagem

@@ -1,83 +1,34 @@
 {
-    "pontos": [
-      { 
-        "ID":"1",
-        "nome": "Ponto de Recarga - Nóide",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"2",
-        "nome": "Ponto de Recarga - Naylane",
-        "fila": ["SARA1405","HELENA56"],
-        "carregando": " "
-      },
-      { 
-        "ID":"3",
-        "nome": "Ponto de Recarga - Sara",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"4",
-        "nome": "Ponto de Recarga - Leticia",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"5",
-        "nome": "Ponto de Recarga - Helena",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"6",
-        "nome": "Ponto de Recarga - Brendinha",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"7",
-        "nome": "Ponto de Recarga - DA Ecomp",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"8",
-        "nome": "Ponto de Recarga - Praça do Nordestino",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"9",
-        "nome": "Ponto de Recarga - Feiraguay",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"10",
-        "nome": "Ponto de Recarga - Shopping",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"12",
-        "nome": "Getúlio",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"13",
-        "nome": "BR",
-        "fila": [],
-        "carregando": " "
-      },
-      { 
-        "ID":"13",
-        "nome": "Ponto de Recarga - Eu amo Feira",
-        "fila": [],
-        "carregando": " "
-      }
-    ]
+  "pontos": [
+    { 
+      "ID":"1",
+      "nome": "FeiraMais",
+      "fila": [],
+      "carregando": " "
+    },
+    { 
+      "ID":"2",
+      "nome": "Energize",
+      "fila": [],
+      "carregando": " "
+    },
+    { 
+      "ID":"3",
+      "nome": "SeuPonto",
+      "fila": [],
+      "carregando": " "
+    },
+    { 
+      "ID":"4",
+      "nome": "Eletricy",
+      "fila": [],
+      "carregando": " "
+    },
+    { 
+      "ID":"5",
+      "nome": "FeiraPonto",
+      "fila": [],
+      "carregando": " "
+    }
+  ]
 }
-  

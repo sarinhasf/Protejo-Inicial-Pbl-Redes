@@ -25,7 +25,7 @@ type PontoInfo struct {
 }
 
 func readChargingPoints(filename string) ([]ChargePoint, error) {
-	leArquivoJson()
+	leArquivoJsonPontos()
 
 	file, err := os.Open(filename) // abre o arquivo CSV
 	if err != nil {
@@ -65,10 +65,9 @@ func readChargingPoints(filename string) ([]ChargePoint, error) {
 
 		}
 	}
-
-	for _, ponto := range chargePoints {
-		fmt.Printf(" | %s | %.6f | %.6f |\n", ponto.Id, ponto.Latitude, ponto.Longitude)
-	}
+	//for _, ponto := range chargePoints {
+		//fmt.Printf(" | %s | %.6f | %.6f |\n", ponto.Id, ponto.Latitude, ponto.Longitude)
+	//}
 
 	return chargePoints, nil
 }
@@ -119,8 +118,8 @@ func pegaPontoProximo(latitudeCarro, longitudeCarro float64) (closestPoint Charg
 	return closestPoint, distance
 }
 
-func analiseTodosPontos(lat float64, lon float64, bateria int, placa string){
-	leArquivoJsonPonto()    //lendo os arquivos do ponto
+func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (string, PontoInfo) {
+	leArquivoJsonPontos()    //lendo os arquivos do ponto
 
 	var pontosOrdenados []PontoInfo
 
@@ -128,7 +127,7 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string){
 	points, err := readChargingPoints("MapaDeFeira.csv")
 	if err != nil {
 		fmt.Println("Error reading csv:", err)
-		return
+		//return 
 	}
 	
 	for _, point := range points {
@@ -157,11 +156,12 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string){
 
 	//Tendo a fila ordenada agora pegamos o primeiro elemento
 	melhor := pontosOrdenados[0]
-	melhor2 := pontosOrdenados[1]
+	//melhor2 := pontosOrdenados[1]
 
-	fmt.Printf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto.Nome, melhor.Distancia, melhor.TamanhoFila)
-	fmt.Printf("O segundo melhor ponto seria: %s - Distância: %.2fKm - Fila: %d veículos\n", melhor2.Ponto.Nome, melhor2.Distancia, melhor2.TamanhoFila)
-
+	//fmt.Printf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto.Nome, melhor.Distancia, melhor.TamanhoFila)
+	//fmt.Printf("O segundo melhor ponto seria: %s - Distância: %.2fKm - Fila: %d veículos\n", melhor2.Ponto.Nome, melhor2.Distancia, melhor2.TamanhoFila)
+	mensagem := fmt.Sprintf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto.Nome, melhor.Distancia, melhor.TamanhoFila)
+	return mensagem, melhor
 }
 
 func tempoDistancia(dist float64) float64 {
