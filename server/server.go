@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
-
-	//"strconv"
-	"encoding/json" //pacote para manipulação de JSON
+	"encoding/json"
 	"strings"
 	"time"
 )
@@ -23,10 +21,10 @@ type Location struct {
 }
 
 type Veiculo struct {
-	Id          string   `json:"id"`
 	Placa       string   `json:"placa"`
 	Location    Location `json:"location"`
-	BateryLevel int      `json:"batery_level"`
+	BateryLevel int      `json:"nivel_bateria"`
+	IdConta		string   `json:"conta_id"`
 }
 
 type PontoRecarga struct {

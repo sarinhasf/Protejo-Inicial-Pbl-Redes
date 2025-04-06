@@ -1,0 +1,50 @@
+{
+    "contas": [
+      { 
+        "id": 1,
+        "pagamentos": [
+            {
+            "idPonto": "1",
+            "valor": 150.00
+          }
+        ]
+      },
+      { 
+        "id": 2,
+        "pagamentos": [
+            {
+            "idPonto": "2",
+            "valor": 150.00
+          }
+        ]
+      },
+      { 
+        "id": 3,
+        "pagamentos": [
+            {
+            "idPonto": "3",
+            "valor": 150.00
+          }
+        ]
+      },
+      { 
+        "id": 4,
+        "pagamentos": [
+            {
+            "idPonto": "4",
+            "valor": 150.00
+          }
+        ]
+      },
+      { 
+        "id": 5,
+        "pagamentos": [
+            {
+            "idPonto": "5",
+            "valor": 150.00
+          }
+        ]
+      }
+    ]
+}
+  

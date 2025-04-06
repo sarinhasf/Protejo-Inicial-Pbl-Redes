@@ -10,7 +10,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
 	//"time"
+	"encoding/json" //pacote para manipulação de JSON
 )
 
 // struct para armazenar os pontos de recarga
@@ -18,6 +20,70 @@ type ChargePoint struct {
 	Latitude  float64
 	Longitude float64
 	Nome      string
+}
+
+// struct para armazenar pagamentos
+type Pagamentos struct {
+	IdPonto string
+	Valor   float64
+}
+
+// struct para armazenar contas de usuario
+type ContaUser struct {
+	Id         string
+	Pagamentos []Pagamentos
+}
+
+type Location struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
+
+type Veiculo struct {
+	Placa       string   `json:"placa"`
+	Location    Location `json:"location"`
+	BateryLevel int      `json:"batery_level"`
+	IdConta     string   `json:"conta_id"`
+}
+
+// struct para armazenar Dados das contas
+type DadosContas struct {
+	Contas []ContaUser `json:"contas"`
+}
+
+type DadosVeiculos struct {
+	Veiculos []Veiculo `json:"veiculos"`
+}
+
+var dadosContas DadosContas
+var dadosVeiculos DadosVeiculos
+
+func leArquivoJsonContas() {
+	bytes, err := os.ReadFile("contasUsuarios.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dadosContas)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
+}
+
+func leArquivoJsonVeiculos() {
+	bytes, err := os.ReadFile("dadosVeiculos.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dadosVeiculos)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
 }
 
 func readChargingPoints(filename string) ([]ChargePoint, error) {
@@ -57,13 +123,86 @@ func readChargingPoints(filename string) ([]ChargePoint, error) {
 	return chargePoints, nil
 }
 
-func main() {
-	//lê os pontos de recarga do arquivo csv
-	/*points, err := readChargingPoints("MapaDeFeira.csv")
+func getVeiculo(placa string) (Veiculo, bool) {
+	var veiculoFinal Veiculo
+	controle := false
+
+	for _, veiculo := range dadosVeiculos.Veiculos {
+		if veiculo.Placa == placa {
+			veiculoFinal = veiculo
+			controle = true
+		}
+	}
+	return veiculoFinal, controle
+}
+
+func getContaUsuario(id string) (ContaUser, bool) {
+	var contaFinal ContaUser
+	controle := false
+
+	for _, conta := range dadosContas.Contas {
+		if conta.Id == id {
+			contaFinal = conta
+			controle = true
+		}
+	}
+	return contaFinal, controle
+}
+
+func salvarDadosPontos() {
+	bytes, err := json.MarshalIndent(dadosContas, "", "  ")
 	if err != nil {
-		fmt.Println("Error reading csv:", err)
-		return
-	}*/
+		fmt.Println("Erro ao converter dadosContas para JSON:", err)
+	}
+
+	err = os.WriteFile("contasUsuarios.json", bytes, 0644)
+	if err != nil {
+		fmt.Println("Erro ao salvar no arquivo contasUsuarios.json:", err)
+	}
+}
+
+func salvarDadosVeiculos() {
+	bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
+	if err != nil {
+		fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
+	}
+
+	err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
+	if err != nil {
+		fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
+	}
+}
+
+// passa o Id do veiculo, o Id do ponto e o valor
+func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
+	veiculo, achou := getVeiculo(idVeiculo)
+	contaId := veiculo.IdConta
+
+	if achou {
+		contaVeiculo, achou2 := getContaUsuario(contaId)
+
+		if achou2 {
+			novoPagamento := Pagamentos{
+				IdPonto: idPonto,
+				Valor:   valor,
+			}
+			contaVeiculo.Pagamentos = append(contaVeiculo.Pagamentos, novoPagamento)
+
+			// Salva no arquivo contasUsuarios.json
+			salvarDadosPontos()
+			fmt.Println("Pagamento registrado com sucesso.")
+		} else {
+			fmt.Printf("Conta do Veiculo %s não encontrada!", veiculo.Placa)
+		}
+
+	} else {
+		fmt.Println("Veiculo não encontrado!")
+	}
+}
+
+func main() {
+	leArquivoJsonContas()
+	leArquivoJsonVeiculos()
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede

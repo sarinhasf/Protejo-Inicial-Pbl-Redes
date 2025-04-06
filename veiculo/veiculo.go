@@ -27,9 +27,10 @@ type Localizacao struct {
 }
 
 type Veiculo struct {
-	Placa        string      `json:"placa"`
-	Localizacao  Localizacao `json:"localizacao"`
-	NivelBateria int         `json:"nivel_bateria"`
+	Placa         string      `json:"placa"`
+	Localizacao   Localizacao `json:"localizacao"`
+	NivelBateria  int         `json:"nivel_bateria"`
+	IdConta		  string   	  `json:"conta_id"`
 }
 
 type Dados struct {

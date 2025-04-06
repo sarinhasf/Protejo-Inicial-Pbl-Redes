@@ -6,7 +6,8 @@
           "latitude": -23.550520,
           "longitude": -46.633308
         },
-        "nivel_bateria": 15
+        "nivel_bateria": 15,
+        "conta_id": "1"
       },
       {
         "placa": "HELENA56",
@@ -14,7 +15,8 @@
           "latitude": -22.902780,
           "longitude": -43.187145
         },
-        "nivel_bateria": 50
+        "nivel_bateria": 50,
+        "conta_id": "2"
       },
       {
         "placa": "SARA1405",
@@ -22,7 +24,8 @@
           "latitude": -72.902780,
           "longitude": -63.187145
         },
-        "nivel_bateria": 20
+        "nivel_bateria": 20,
+        "conta_id": "3"
       },
       {
         "placa": "BRENDA2424",
@@ -30,7 +33,8 @@
           "latitude": -72.902780,
           "longitude": -63.187145
         },
-        "nivel_bateria": 15
+        "nivel_bateria": 15,
+        "conta_id": "4"
       },
       {
         "placa": "LETY2424",
@@ -38,7 +42,8 @@
           "latitude": -72.902780,
           "longitude": -63.187145
         },
-        "nivel_bateria": 20
+        "nivel_bateria": 20,
+        "conta_id": "5"
       }
     ]
 }
