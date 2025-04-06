@@ -47,7 +47,7 @@ func trataInfo(mensagem string) (plaque string, lat, lon float64) {
 
 	// Cria um novo veículo
 	novoVeiculo := Veiculo{ // ****** OLHA AQUI DEPOIS ******
-		Id:          placa, // ID do veículo (pode ser o mesmo que a placa) se for tirar o id ou de fato dar um id diferente da placa
+		//Id:          placa, // ID do veículo (pode ser o mesmo que a placa) se for tirar o id ou de fato dar um id diferente da placa
 		Placa:       placa,
 		Location:    Location{Latitude: latitudeFloat, Longitude: longitudeFloat},
 		BateryLevel: bateriaInt,

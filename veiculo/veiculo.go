@@ -90,11 +90,14 @@ func main() {
 		for _, veiculo := range dados.Veiculos {
 			fmt.Println("\n==========================================================================")
 			if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
-				randomCoord := randomPointInBoundingBox(polygon)
+				//randomCoord := randomPointInBoundingBox(polygon)
 				//define mensagem
+				//mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
+				//	veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
 				mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
-					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
-				fmt.Println(mensagem)
+					veiculo.Placa, veiculo.NivelBateria, -12.260784, -38.980637)
+				//fmt.Println(mensagem)
+				fmt.Println("Veículo enviado ao servidor:", mensagem)
 				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
 
 				_, err := conn.Write([]byte(mensagem)) //envia mensagem

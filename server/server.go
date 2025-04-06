@@ -23,7 +23,6 @@ type Location struct {
 }
 
 type Veiculo struct {
-	Id          string   `json:"id"`
 	Placa       string   `json:"placa"`
 	Location    Location `json:"location"`
 	BateryLevel int      `json:"batery_level"`
@@ -44,18 +43,31 @@ type DadosPontos struct {
 	Pontos []PontoRecarga `json:"pontos"`
 }
 
-/*func getVeiculo(id string) (Veiculo, bool){
+func getVeiculo(id string) (Veiculo, bool) {
 	var veiculoFinal Veiculo
 	controle := false
 
-	for _, veiculo := range dados.Veiculos {
-		if veiculo.Id == id {
+	for _, veiculo := range dadosVeiculos.Veiculos {
+		if veiculo.Placa == id {
 			veiculoFinal = veiculo
 			controle = true
 		}
 	}
 	return veiculoFinal, controle
-}*/
+}
+
+func getPonto(nome string) (PontoRecarga, bool) {
+	var pontoFinal PontoRecarga
+	controle := false
+
+	for _, ponto := range dadosPontos.Pontos {
+		if ponto.Nome == nome {
+			pontoFinal = ponto
+			controle = true
+		}
+	}
+	return pontoFinal, controle
+}
 
 func leArquivoJson() {
 	bytes, err := os.ReadFile("dadosPontos.json")
@@ -183,9 +195,9 @@ func handleConnection(conn net.Conn) {
 				time.Sleep(3 * time.Second)             //espera alguns segundos antes de enviar de fato a mensagem
 				pontosConns = append(pontosConns, conn) // lista para armazenar as conexões dos pontos
 				fmt.Println("Novo ponto de recarga conectado!")
-
-			} else {
-				fmt.Print("Aguardando nova requisição dos veiculos.\n\n")
+			
+				} else {
+				fmt.Print("Aguardando nova requisção dos veiculos.\n\n")
 			}
 		}
 
@@ -195,8 +207,51 @@ func handleConnection(conn net.Conn) {
 	}
 }
 
+func leArquivoJson() {
+	bytes, err := os.ReadFile("dadosPontos.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dadosPontos)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
+}
+
+func addFila(idPonto string, idCarro string){
+	for _, ponto := range dadosPontos.Pontos {
+		if(ponto.Id == idPonto){
+			ponto.Fila = append(ponto.Fila, idPonto)
+		}
+	}
+}
+
+func removeFila(idPonto string, idCarro string) {
+	for i, ponto := range dadosPontos.Pontos {
+		if ponto.Id == idPonto {
+			for j, carro := range ponto.Fila {
+				if carro == idCarro {
+					// Remove o carro da fila
+					dadosPontos.Pontos[i].Fila = append(ponto.Fila[:j], ponto.Fila[j+1:]...)
+					return
+				}
+			}
+		}
+	}
+}
+
+func salvarDados(data DadosPontos) {
+	file, _ := json.MarshalIndent(data, "", "  ")
+	os.WriteFile("dadosPontos.json", file, 0644)
+}
+
+
 func main() {
-	leArquivoJson() //lendo os arquivos do ponto
+	leArquivoJsonPonto()    //lendo os arquivos do ponto
+	leArquivoJsonVeiculos() //lendo os dados do veiculo
 
 	//Verificação se o servidor iniciou corretamente
 	listener, err := net.Listen("tcp", ":8080")
