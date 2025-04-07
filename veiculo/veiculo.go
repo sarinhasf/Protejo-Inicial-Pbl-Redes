@@ -25,10 +25,10 @@ type Localizacao struct {
 }
 
 type Veiculo struct {
-	Placa         string      `json:"placa"`
-	Localizacao   Localizacao `json:"localizacao"`
-	NivelBateria  int         `json:"nivel_bateria"`
-	IdConta		  string   	  `json:"conta_id"`
+	Placa        string      `json:"placa"`
+	Localizacao  Localizacao `json:"localizacao"`
+	NivelBateria int         `json:"nivel_bateria"`
+	IdConta      string      `json:"conta_id"`
 }
 
 type Dados struct {
@@ -85,16 +85,23 @@ func main() {
 		return
 	}
 
+	//Envia mensagem
+	mensagem := "VEICULO CONECTADO\n " //tem que terminar com \n se não o servidor não processa
+	fmt.Println("Registro de Veiculo conectado ao servidor:", mensagem)
+	_, error := conn.Write([]byte(mensagem))
+	if error != nil {
+		fmt.Println("Erro ao enviar mensagem de registro ao servidor:", err)
+		return
+	}
+
 	for { //criando for infinito para manter conexão
 		for _, veiculo := range dados.Veiculos {
-			fmt.Println("\n==========================================================================")
+			fmt.Println("\n====================================================")
 			if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
-				//randomCoord := randomPointInBoundingBox(polygon)
+				randomCoord := randomPointInBoundingBox(polygon)
 				//define mensagem
-				//mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
-				//	veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
-				mensagem := fmt.Sprintf("VEICULO %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
-					veiculo.Placa, veiculo.NivelBateria, -12.260784, -38.980637)
+				mensagem := fmt.Sprintf("VEICULO | Placa %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
+					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
 				fmt.Println(mensagem)
 				//fmt.Println("Veículo enviado ao servidor:", mensagem)
 				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
@@ -120,7 +127,7 @@ func main() {
 					var reserva string
 					fmt.Scanln(&reserva) //lê resposta do usuário
 
-					_, err := conn.Write([]byte(reserva + "\n")) //envia resposta
+					_, err := conn.Write([]byte("VEICULO " + reserva + "\n")) //envia resposta
 					if err != nil {
 						fmt.Println("Erro ao enviar resposta ao servidor:", err)
 						return

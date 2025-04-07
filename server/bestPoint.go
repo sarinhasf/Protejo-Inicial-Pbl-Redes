@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
-	"sort"
 )
 
 // struct para armazenar os pontos de recarga
@@ -66,7 +66,7 @@ func readChargingPoints(filename string) ([]ChargePoint, error) {
 		}
 	}
 	//for _, ponto := range chargePoints {
-		//fmt.Printf(" | %s | %.6f | %.6f |\n", ponto.Id, ponto.Latitude, ponto.Longitude)
+	//fmt.Printf(" | %s | %.6f | %.6f |\n", ponto.Id, ponto.Latitude, ponto.Longitude)
 	//}
 
 	return chargePoints, nil
@@ -119,7 +119,7 @@ func pegaPontoProximo(latitudeCarro, longitudeCarro float64) (closestPoint Charg
 }
 
 func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (string, PontoInfo) {
-	leArquivoJsonPontos()    //lendo os arquivos do ponto
+	leArquivoJsonPontos() //lendo os arquivos do ponto
 
 	var pontosOrdenados []PontoInfo
 
@@ -127,20 +127,20 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 	points, err := readChargingPoints("MapaDeFeira.csv")
 	if err != nil {
 		fmt.Println("Error reading csv:", err)
-		//return 
+		//return
 	}
-	
+
 	for _, point := range points {
 		dist := calculateDistance(lat, lon, point.Latitude, point.Longitude)
 		pontoEncontrado, controle := getPonto(point.Nome)
-		if(controle){
+		if controle {
 			p := PontoInfo{
 				Ponto:       point,
 				Distancia:   dist,
 				TamanhoFila: len(pontoEncontrado.Fila),
 			}
 			pontosOrdenados = append(pontosOrdenados, p)
-		}else{
+		} else {
 			fmt.Printf("Ponto não encontrado!\n")
 			break
 		}
@@ -166,10 +166,9 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 
 func tempoDistancia(dist float64) float64 {
 	//considerando que todos carros rodem em uma media de 60km/h
-	horas := dist/60
+	horas := dist / 60
 	return horas
 }
-
 
 // Calcula o tempo de carregamento em horas
 func calcularTempoCargaHoras(nivelBateria int) float64 {
@@ -182,7 +181,7 @@ func calcularTempoCargaHoras(nivelBateria int) float64 {
 	var kwhBateria float64 = 100
 
 	if nivelInicial >= 100 {
-		fmt.Print("Este carro ja esta 100% carregado.\n\n")
+		fmt.Print("Este carro ja esta 100%% carregado.\n\n")
 	}
 
 	// Energia total a carregar (em kWh)
@@ -215,9 +214,7 @@ func calcularTempoCargaHoras(nivelBateria int) float64 {
 	}
 
 	// Tempo total em horas
-	tempoTotalHoras  := tempoFase1 + tempoFase2
+	tempoTotalHoras := tempoFase1 + tempoFase2
 
 	return tempoTotalHoras
 }
-
-

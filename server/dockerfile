@@ -9,7 +9,7 @@ RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.js
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosPontos.json ./dadosPontos.json
 
 # Compila o servidor
-RUN go build -o server server.go findNearestPoint.go trataInfoVeiculo.go
+RUN go build -o server main.go bestPoint.go filas.go getters.go handlers.go tipos.go trataInfoVeiculo.go trataJson.go
 # expõe a porta 8080 para conexões TCP
 EXPOSE 8080
 #Quando o contêiner inicia, executa ./server para rodar o servidor

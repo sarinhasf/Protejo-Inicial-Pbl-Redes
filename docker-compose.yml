@@ -15,7 +15,7 @@ services:
     depends_on:
       - server
     environment:
-      - PLACA=NAY00235
+      - PLACA=MUQ9437
     volumes:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json

@@ -1,50 +1,49 @@
 {
-    "contas": [
-      { 
-        "id": 1,
-        "pagamentos": [
-            {
-            "idPonto": "1",
-            "valor": 150.00
-          }
-        ]
-      },
-      { 
-        "id": 2,
-        "pagamentos": [
-            {
-            "idPonto": "2",
-            "valor": 150.00
-          }
-        ]
-      },
-      { 
-        "id": 3,
-        "pagamentos": [
-            {
-            "idPonto": "3",
-            "valor": 150.00
-          }
-        ]
-      },
-      { 
-        "id": 4,
-        "pagamentos": [
-            {
-            "idPonto": "4",
-            "valor": 150.00
-          }
-        ]
-      },
-      { 
-        "id": 5,
-        "pagamentos": [
-            {
-            "idPonto": "5",
-            "valor": 150.00
-          }
-        ]
-      }
-    ]
+  "contas": [
+    {
+      "Id": "1",
+      "Pagamentos": [
+        {
+          "IdPonto": "1",
+          "Valor": 150
+        }
+      ]
+    },
+    {
+      "Id": "2",
+      "Pagamentos": [
+        {
+          "IdPonto": "2",
+          "Valor": 150
+        }
+      ]
+    },
+    {
+      "Id": "3",
+      "Pagamentos": [
+        {
+          "IdPonto": "3",
+          "Valor": 150
+        }
+      ]
+    },
+    {
+      "Id": "4",
+      "Pagamentos": [
+        {
+          "IdPonto": "4",
+          "Valor": 150
+        }
+      ]
+    },
+    {
+      "Id": "5",
+      "Pagamentos": [
+        {
+          "IdPonto": "5",
+          "Valor": 150
+        }
+      ]
+    }
+  ]
 }
-  

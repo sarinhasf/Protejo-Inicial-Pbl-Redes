@@ -8,24 +8,24 @@ import (
 
 func trataInfo(mensagem string) (plaque string, lat, lon float64) {
 	// Se a mensagem começa com "VEICULO", processa como um veículo
-	// Exemplo de mensagem: "VEICULO Placa1234 | Bateria: % | Latitude: lat | Longitude: long"
+	// Exemplo de mensagem: "VEICULO | Placa ABC1234 | Bateria: % | Latitude: lat | Longitude: long"
 	mensagem = strings.TrimPrefix(mensagem, "VEICULO")
 	parts := strings.Split(mensagem, "|")
-	if len(parts) != 4 {
+	if len(parts) != 5 {
 		fmt.Println("Mensagem inválida:", mensagem)
 		return
 	}
 
-	placa := strings.TrimSpace(parts[0])
+	placa := strings.TrimSpace(parts[1])
 	// Remove o prefixo e sufixo
 	// Exemplo: "Bateria: 80%" -> "80"
-	bateria := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[1], " Bateria: "), "% "))
-	latitude := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[2], " Latitude: "), " "))
-	longitude := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[3], " Longitude: "), " "))
+	bateria := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[2], " Bateria: "), "% "))
+	latitude := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[3], " Latitude: "), " "))
+	longitude := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(parts[4], " Longitude: "), " "))
 
 	// sanitiza a longitude para evitar problemas de formatação
 	if strings.Contains(longitude, "\n ") { // se a longitude contiver "\n ", remove o espaço em branco
-		longitude = strings.TrimSpace(strings.TrimSuffix(parts[3], "\n"))
+		longitude = strings.TrimSpace(strings.TrimSuffix(parts[4], "\n"))
 	}
 
 	// Converte os valores para os tipos corretos
