@@ -93,10 +93,10 @@ func main() {
 		fmt.Println("Erro ao enviar mensagem de registro ao servidor:", err)
 		return
 	}
+	fmt.Println("\n====================================================")
 
 	for { //criando for infinito para manter conexão
 		for _, veiculo := range dados.Veiculos {
-			fmt.Println("\n====================================================")
 			if veiculo.Placa == veiculoID && veiculo.NivelBateria <= 20 {
 				randomCoord := randomPointInBoundingBox(polygon)
 				//define mensagem
@@ -112,17 +112,21 @@ func main() {
 					return
 				}
 
-				// lê resposta do servidor
-				buffer := make([]byte, 1024) //cria buffer para receber dados
+				buffer := make([]byte, 1024) // cria buffer para receber dados
 				n, err := conn.Read(buffer)
 				if err != nil {
+					if err.Error() == "EOF" { // Conexão encerrada pelo servidor
+						fmt.Println("Conexão encerrada pelo servidor.")
+						break
+					}
 					fmt.Println("Erro ao receber mensagem do servidor:", err)
-					return
+					continue
 				}
-				mensagem2 := string(buffer[:n])
-				fmt.Println(mensagem2) //exibe mensagem recebida
 
-				if strings.Contains(mensagem2, "Ponto de recarga mais próximo:") {
+				mensagemRecebida := string(buffer[:n])
+				fmt.Println(mensagemRecebida) //exibe mensagem recebida
+
+				if strings.Contains(mensagemRecebida, "Melhor ponto para o veículo") {
 					fmt.Println("Deseja entrar na fila(S/N)?")
 					var reserva string
 					fmt.Scanln(&reserva) //lê resposta do usuário
@@ -142,9 +146,13 @@ func main() {
 						return
 					}
 					fmt.Println(string(buffer[:n])) //exibe mensagem recebida
+				} else if strings.Contains(mensagemRecebida, "PONTO: Veiculo") {
+					mensagemRecebida = strings.TrimPrefix(mensagemRecebida, "PONTO: ")
+					fmt.Println(mensagemRecebida)
 				}
 			}
 			time.Sleep(1 * time.Minute)
 		}
 	}
+
 }

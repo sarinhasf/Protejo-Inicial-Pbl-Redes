@@ -3,31 +3,44 @@
     {
       "Id": "1",
       "Nome": "DA Ecomp",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437",
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     },
     {
       "Id": "2",
       "Nome": "Tomba",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     },
     {
       "Id": "3",
       "Nome": "Jóia",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437",
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     },
     {
       "Id": "4",
       "Nome": "Rodoviária",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     },
     {
       "Id": "5",
       "Nome": "Portal Feira",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437",
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     }
   ]

@@ -36,7 +36,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		}
 
 		if len(filaPonto) == 0 {
-			msg := fmt.Sprintf("Ponto de recarga mais próximo: %s - Distância: %.2fKm\n", nomePontoProx, distance)
+			msg := fmt.Sprintf("Melhor ponto para o veículo %s - Distância: %.2fKm - Fila: %d veículos \n", nomePontoProx, distance, len(filaPonto))
 			conn.Write([]byte(msg))
 
 			sessao.AguardandoResposta = true
@@ -46,18 +46,15 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		} else if veiculo, ok := getVeiculo(placa); ok {
 			msg, melhorPonto := analiseTodosPontos(lat, lon, veiculo.BateryLevel, placa)
 			conn.Write([]byte(msg))
-			
+
 			sessao.AguardandoResposta = true
 			sessao.MelhorPontoID = melhorPonto.Ponto.Id
 			sessao.MelhorPontoNome = melhorPonto.Ponto.Nome
 		}
 
 	} else if sessao.AguardandoResposta {
-		fmt.Println(mensagem)
 		resposta := strings.TrimPrefix(mensagem, "VEICULO")
-		fmt.Println(mensagem)
 		resposta = strings.TrimSpace(resposta)
-		fmt.Println(mensagem)
 		resposta = strings.ToLower(resposta)
 		fmt.Printf("Resposta do veículo %s:%s\n", sessao.PlacaVeiculo, resposta)
 
@@ -89,12 +86,23 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 		fmt.Println(mensagem)
 		placaRegex := regexp.MustCompile(`[A-Z]{3}[0-9][A-Z0-9][0-9]{2}`)
 		placa := placaRegex.FindString(mensagem)
+		fmt.Println("placa:", placa)
 
-		if placa != "" {
-			if connVeiculo, ok := veiculosConns[placa]; ok {
-				connVeiculo.Write([]byte(mensagem + "\n"))
-			}
+		// Regex para o número do ponto (após "Ponto ")
+		pontoRegex := regexp.MustCompile(`Ponto (\d+)`)
+		pontoMatch := pontoRegex.FindStringSubmatch(mensagem)
+		var ponto string
+		if len(pontoMatch) > 1 {
+			ponto = pontoMatch[1]
 		}
+		ponto = strings.TrimSpace(ponto)
+		fmt.Println("numero do ponto:", ponto)
+
+		//removeFila(ponto, placa)
+		//sendFila(ponto)
+
+		//sendToVehicle(placa, mensagem)
+
 	}
 }
 
@@ -148,10 +156,10 @@ func handleConnection(conn net.Conn) {
 			}
 
 			switch sessao.Tipo {
-				case TipoCliente(TipoVeiculo):
-					handleVeiculo(sessao, mensagem)
-				case TipoCliente(TipoPonto):
-					handlePonto(sessao, mensagem)
+			case TipoCliente(TipoVeiculo):
+				handleVeiculo(sessao, mensagem)
+			case TipoCliente(TipoPonto):
+				handlePonto(sessao, mensagem)
 			}
 		}
 		//atualiza o buffer acumulado para manter apenas a última mensagem incompleta

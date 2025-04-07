@@ -2,14 +2,14 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json" //pacote para manipulação de JSON
 	"fmt"
 	"net"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
-	"encoding/json" //pacote para manipulação de JSON
-	"time"          //pacote para manipulação de tempo
+	"time" //pacote para manipulação de tempo
 )
 
 // struct para armazenar os pontos de recarga
@@ -166,15 +166,15 @@ func salvarDadosContas() {
 }
 
 //func salvarDadosVeiculos() {
-	//bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
-	//if err != nil {
-	//	fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
-	//}
+//bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
+//if err != nil {
+//	fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
+//}
 
-	//err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
-	//if err != nil {
-	//	fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
-	//}
+//err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
+//if err != nil {
+//	fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
+//}
 //}
 
 func processarFila(idPonto string, filaSlice []string) {
@@ -316,8 +316,9 @@ func main() {
 		// decodifica a mensagem recebida
 		// Exemplo de mensagem recebida: {"id_ponto": "1", "fila": ["carro1", "carro2"]}
 		var mensagemRecebida struct {
-			IdPonto string   `json:"id_ponto"`
-			Fila    []string `json:"fila"`
+			IdPonto    string   `json:"id_ponto"`
+			Fila       []string `json:"fila"`
+			Carregando bool     `json:"carregando"`
 		}
 
 		err = json.Unmarshal(buffer[:n], &mensagemRecebida)
@@ -333,7 +334,7 @@ func main() {
 		processarFila(mensagemRecebida.IdPonto, mensagemRecebida.Fila)
 
 		precoRecarga := calculaPrecoRecarga(dadosVeiculos.Veiculos[0].BateryLevel)
-		preco := fmt.Sprintf("PONTO: Veiculo %s - R$ %.2f\n", dadosVeiculos.Veiculos[0].Placa, precoRecarga)
+		preco := fmt.Sprintf("PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
 
 		// Envia o preço da recarga de volta ao servidor
 		_, err = conn.Write([]byte(preco))

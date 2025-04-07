@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-
 func leArquivoJsonPontos() {
 	bytes, err := os.ReadFile("dadosPontos.json")
 	if err != nil {
@@ -50,8 +49,7 @@ func salvarDados(data DadosPontos) {
 	}
 }
 
-
-//procura um veículo na lista de veículos cadastrados (dadosVeiculos.Veiculos) com base na placa 
+// procura um veículo na lista de veículos cadastrados (dadosVeiculos.Veiculos) com base na placa
 func getVeiculo(placa string) (Veiculo, bool) {
 	var veiculoFinal Veiculo
 	controle := false
@@ -62,7 +60,7 @@ func getVeiculo(placa string) (Veiculo, bool) {
 			controle = true
 		}
 	}
-	// retorna o veículo encontrado (do tipo Veiculo), 
+	// retorna o veículo encontrado (do tipo Veiculo),
 	// e um booleano indicando se o veículo foi encontrado (true) ou não (false)
 	return veiculoFinal, controle
 }
@@ -79,7 +77,6 @@ func getPonto(id string) (PontoRecarga, bool) {
 	}
 	return pontoFinal, controle
 }
-
 
 func sendFila(idPonto string) {
 	for _, ponto := range dadosPontos.Pontos {
@@ -111,6 +108,31 @@ func sendFila(idPonto string) {
 			break
 		}
 	}
+}
+
+func sendToVehicle(placaVeiculo string, mensagem string) {
+	// Procura o veículo na lista de veículos cadastrados
+	_, encontrado := getVeiculo(placaVeiculo)
+	if !encontrado {
+		fmt.Printf("Erro: Veículo com placa %s não encontrado\n", placaVeiculo)
+		return
+	}
+
+	// Verifica se o veículo está conectado
+	conn, conectado := veiculosConns[placaVeiculo]
+	if !conectado {
+		fmt.Printf("Erro: Veículo com placa %s não está conectado\n", placaVeiculo)
+		return
+	}
+
+	// Envia a mensagem para o veículo
+	_, err := conn.Write([]byte(mensagem + "\n")) // '\n' indica o fim da mensagem
+	if err != nil {
+		fmt.Println("Erro ao enviar mensagem para o veículo:", err)
+		return
+	}
+
+	fmt.Printf("Mensagem enviada para o veículo %s: %s\n", placaVeiculo, mensagem)
 }
 
 func addFila(idPonto string, placaVeiculo string) {
