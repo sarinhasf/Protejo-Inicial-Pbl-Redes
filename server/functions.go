@@ -67,12 +67,12 @@ func getVeiculo(placa string) (Veiculo, bool) {
 	return veiculoFinal, controle
 }
 
-func getPonto(nome string) (PontoRecarga, bool) {
+func getPonto(id string) (PontoRecarga, bool) {
 	var pontoFinal PontoRecarga
 	controle := false
 
 	for _, ponto := range dadosPontos.Pontos {
-		if ponto.Nome == nome {
+		if ponto.Id == id {
 			pontoFinal = ponto
 			controle = true
 		}

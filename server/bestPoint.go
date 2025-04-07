@@ -119,6 +119,7 @@ func pegaPontoProximo(latitudeCarro, longitudeCarro float64) (closestPoint Charg
 }
 
 func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (string, PontoInfo) {
+
 	leArquivoJsonPontos() //lendo os arquivos do ponto
 
 	var pontosOrdenados []PontoInfo
@@ -132,7 +133,7 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 
 	for _, point := range points {
 		dist := calculateDistance(lat, lon, point.Latitude, point.Longitude)
-		pontoEncontrado, controle := getPonto(point.Nome)
+		pontoEncontrado, controle := getPonto(point.Id)
 		if controle {
 			p := PontoInfo{
 				Ponto:       point,
@@ -140,6 +141,7 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 				TamanhoFila: len(pontoEncontrado.Fila),
 			}
 			pontosOrdenados = append(pontosOrdenados, p)
+
 		} else {
 			fmt.Printf("Ponto não encontrado!\n")
 			break

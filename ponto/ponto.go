@@ -287,9 +287,16 @@ func main() {
 	}
 	//defer conn.Close()
 
+	// Lendo a variável de ambiente do docker compose
+	pontoID := os.Getenv("ID-PONTO")
+	if pontoID == "" {
+		fmt.Println("Erro: PLACA não definida")
+		return
+	}
+
 	//Envia mensagem
 	mensagem := "PONTO DE RECARGA CONECTADO\n " //tem que terminar com \n se não o servidor não processa
-	fmt.Println("Registro de Ponto de recarga conectado ao servidor:", mensagem)
+	fmt.Printf("Registro de Ponto de recarga %s conectado ao servidor.\n", pontoID)
 
 	_, error := conn.Write([]byte(mensagem))
 	if error != nil {

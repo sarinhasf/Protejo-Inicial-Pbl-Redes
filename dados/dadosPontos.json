@@ -3,9 +3,7 @@
     {
       "Id": "1",
       "Nome": "DA Ecomp",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
@@ -23,17 +21,13 @@
     {
       "Id": "4",
       "Nome": "Rodoviária",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "5",
       "Nome": "Portal Feira",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     }
   ]
