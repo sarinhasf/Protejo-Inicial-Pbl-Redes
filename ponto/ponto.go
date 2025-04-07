@@ -1,17 +1,13 @@
 package main
 
 import (
-	//"bufio"
 	"encoding/csv"
 	"fmt"
-
-	//"math"
 	"net"
 	"os"
 	"strconv"
 	"strings"
-
-	//"time"
+	"sync"
 	"encoding/json" //pacote para manipulação de JSON
 )
 
@@ -57,6 +53,7 @@ type DadosVeiculos struct {
 
 var dadosContas DadosContas
 var dadosVeiculos DadosVeiculos
+var mutex sync.Mutex //evitar concorrencia nos arquivos
 
 func leArquivoJsonContas() {
 	bytes, err := os.ReadFile("contasUsuarios.json")
@@ -149,7 +146,7 @@ func getContaUsuario(id string) (ContaUser, bool) {
 	return contaFinal, controle
 }
 
-func salvarDadosPontos() {
+func salvarDadosContas() {
 	bytes, err := json.MarshalIndent(dadosContas, "", "  ")
 	if err != nil {
 		fmt.Println("Erro ao converter dadosContas para JSON:", err)
@@ -175,6 +172,9 @@ func salvarDadosVeiculos() {
 
 // passa o Id do veiculo, o Id do ponto e o valor
 func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
+	mutex.Lock()         //bloqueia acesso concorrente
+	defer mutex.Unlock() //libera depois da execução da função
+
 	veiculo, achou := getVeiculo(idVeiculo)
 	contaId := veiculo.IdConta
 
@@ -189,7 +189,7 @@ func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 			contaVeiculo.Pagamentos = append(contaVeiculo.Pagamentos, novoPagamento)
 
 			// Salva no arquivo contasUsuarios.json
-			salvarDadosPontos()
+			salvarDadosContas()
 			fmt.Println("Pagamento registrado com sucesso.")
 		} else {
 			fmt.Printf("Conta do Veiculo %s não encontrada!", veiculo.Placa)

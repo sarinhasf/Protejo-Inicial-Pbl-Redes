@@ -78,6 +78,8 @@ services:
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
     environment:
       - ID-PONTO=1
+    stdin_open: true
+    tty: true
 
   #ponto2:
    # build: ./ponto

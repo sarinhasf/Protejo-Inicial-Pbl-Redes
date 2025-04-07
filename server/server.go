@@ -7,12 +7,14 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
+	"sync"
 )
 
 var (
 	dadosVeiculos DadosVeiculos
 	dadosPontos   DadosPontos
 	pontosConns   []net.Conn // Lista de conexões dos pontos de recarga
+	mutex sync.Mutex //evitar concorrencia nos arquivos
 )
 
 type Location struct {
@@ -97,18 +99,22 @@ func leArquivoJsonVeiculos() {
 }
 
 func addFila(idPonto string, placaVeiculo string) {
+	mutex.Lock()         //bloqueia acesso concorrente
+	defer mutex.Unlock() //libera depois da execução
+
 	encontrado := false
 
 	for i, ponto := range dadosPontos.Pontos {
 		if strings.TrimSpace(ponto.Id) == strings.TrimSpace(idPonto) {
 			dadosPontos.Pontos[i].Fila = append(ponto.Fila, placaVeiculo)
-			fmt.Printf("Veículo %s adicionado à fila do ponto %s\n", placaVeiculo, ponto.Nome)
 			encontrado = true
 			break
 		}
 	}
 
-	if !encontrado {
+	if encontrado {
+		salvarDadosPontos()
+	} else {
 		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado\n", idPonto)
 	}
 }
@@ -127,9 +133,16 @@ func removeFila(idPonto string, idCarro string) {
 	}
 }
 
-func salvarDados(data DadosPontos) {
-	file, _ := json.MarshalIndent(data, "", "  ")
-	os.WriteFile("dadosPontos.json", file, 0644)
+func salvarDadosPontos() {
+	bytes, err := json.MarshalIndent(dadosPontos, "", "  ")
+	if err != nil {
+		fmt.Println("Erro ao converter dadosContas para JSON:", err)
+	}
+
+	err = os.WriteFile("dadosPontos.json", bytes, 0644)
+	if err != nil {
+		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
+	}
 }
 
 func handleConnection(conn net.Conn) {
