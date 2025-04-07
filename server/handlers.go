@@ -13,8 +13,9 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 	if strings.Contains(mensagem, "VEICULO CONECTADO") {
 		pontosConns = append(pontosConns, conn)
 		fmt.Println("Novo veiculo conectado!")
+
 	} else if strings.HasPrefix(mensagem, "VEICULO |") {
-		// primeira mensaem que o veiclo envia, com as informações do veiculo
+		// primeira mensagem que o veiclo envia, com as informações do veiculo
 		placa, lat, lon := trataInfo(mensagem)
 		sessao.PlacaVeiculo = placa
 		veiculosConns[placa] = conn
@@ -44,8 +45,8 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 
 		} else if veiculo, ok := getVeiculo(placa); ok {
 			msg, melhorPonto := analiseTodosPontos(lat, lon, veiculo.BateryLevel, placa)
-
 			conn.Write([]byte(msg))
+			
 			sessao.AguardandoResposta = true
 			sessao.MelhorPontoID = melhorPonto.Ponto.Id
 			sessao.MelhorPontoNome = melhorPonto.Ponto.Nome
@@ -136,8 +137,10 @@ func handleConnection(conn net.Conn) {
 			if sessao.Tipo == "" {
 				if strings.HasPrefix(mensagem, "VEICULO ") {
 					sessao.Tipo = TipoCliente(TipoVeiculo)
+
 				} else if strings.HasPrefix(mensagem, "PONTO") {
 					sessao.Tipo = TipoCliente(TipoPonto)
+
 				} else {
 					fmt.Println("Tipo de cliente não reconhecido:", mensagem)
 					return
@@ -145,10 +148,10 @@ func handleConnection(conn net.Conn) {
 			}
 
 			switch sessao.Tipo {
-			case TipoCliente(TipoVeiculo):
-				handleVeiculo(sessao, mensagem)
-			case TipoCliente(TipoPonto):
-				handlePonto(sessao, mensagem)
+				case TipoCliente(TipoVeiculo):
+					handleVeiculo(sessao, mensagem)
+				case TipoCliente(TipoPonto):
+					handlePonto(sessao, mensagem)
 			}
 		}
 		//atualiza o buffer acumulado para manter apenas a última mensagem incompleta

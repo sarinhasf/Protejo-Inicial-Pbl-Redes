@@ -165,17 +165,17 @@ func salvarDadosContas() {
 	}
 }
 
-func salvarDadosVeiculos() {
-	bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
-	if err != nil {
-		fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
-	}
+//func salvarDadosVeiculos() {
+	//bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
+	//if err != nil {
+	//	fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
+	//}
 
-	err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
-	if err != nil {
-		fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
-	}
-}
+	//err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
+	//if err != nil {
+	//	fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
+	//}
+//}
 
 func processarFila(idPonto string, filaSlice []string) {
 	// Verifica se a fila não está vazia
