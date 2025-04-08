@@ -19,7 +19,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		placa, lat, lon := trataInfo(mensagem)
 		sessao.PlacaVeiculo = placa
 		veiculosConns[placa] = conn
-		fmt.Printf("Conexão registrada para o veículo %s\n", placa)
+		fmt.Printf("Informações chegaram ao servidor do veículo [%s]\n", placa)
 
 		closestPoint, distance := pegaPontoProximo(lat, lon)
 
@@ -36,7 +36,9 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		}
 
 		if len(filaPonto) == 0 {
-			msg := fmt.Sprintf("Melhor ponto para o veículo %s - Distância: %.2fKm - Fila: %d veículos \n", nomePontoProx, distance, len(filaPonto))
+			fmt.Printf("\nMensagem Enviada ao Veículo %s do melhor ponto.\n", placa)
+			//fmt.Printf("\nNome do ponto + prox: %s, e ID: %s\n", nomePontoProx, pontoID)
+			msg := fmt.Sprintf("Melhor ponto para o veículo %s: Ponto %s - Distância: %.2fKm - Fila: %d veículos \n", placa, nomePontoProx, distance, len(filaPonto))
 			conn.Write([]byte(msg))
 
 			sessao.AguardandoResposta = true
@@ -56,10 +58,10 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		resposta := strings.TrimPrefix(mensagem, "VEICULO")
 		resposta = strings.TrimSpace(resposta)
 		resposta = strings.ToLower(resposta)
-		fmt.Printf("Resposta do veículo %s:%s\n", sessao.PlacaVeiculo, resposta)
+		fmt.Printf("\nResposta Recebida do veículo %s: [%s]\n", sessao.PlacaVeiculo, resposta)
 
 		if resposta == "sim" {
-			addFila(sessao.MelhorPontoID, sessao.PlacaVeiculo)
+			addFila(sessao.MelhorPontoID, sessao.PlacaVeiculo) //adicionando veiculo na fila
 			confirmacao := fmt.Sprintf("Veículo %s adicionado à fila do ponto de recarga %s\n", sessao.PlacaVeiculo, sessao.MelhorPontoNome)
 			conn.Write([]byte(confirmacao + "\n"))
 
@@ -86,7 +88,7 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 		fmt.Println(mensagem)
 		placaRegex := regexp.MustCompile(`[A-Z]{3}[0-9][A-Z0-9][0-9]{2}`)
 		placa := placaRegex.FindString(mensagem)
-		fmt.Println("placa:", placa)
+		//fmt.Println("placa:", placa)
 
 		// Regex para o número do ponto (após "Ponto ")
 		pontoRegex := regexp.MustCompile(`Ponto (\d+)`)
@@ -96,13 +98,9 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 			ponto = pontoMatch[1]
 		}
 		ponto = strings.TrimSpace(ponto)
-		fmt.Println("numero do ponto:", ponto)
-
-		//removeFila(ponto, placa)
-		//sendFila(ponto)
-
-		//sendToVehicle(placa, mensagem)
-
+		//fmt.Println("numero do ponto:", ponto)
+		fmt.Println("\n======================================================================================")
+		fmt.Printf("Veículo %s finalizou recarga no ponto %s, e seu pagamento foi registrado com sucesso!\n\n", placa, ponto)
 	}
 }
 

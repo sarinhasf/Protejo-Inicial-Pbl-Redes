@@ -3,25 +3,19 @@
     {
       "Id": "1",
       "Nome": "DA Ecomp",
-      "Fila": [
-        "Placa MUQ9437",
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "2",
       "Nome": "Tomba",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "3",
       "Nome": "Jóia",
       "Fila": [
-        "Placa MUQ9437",
         "Placa MUQ9437"
       ],
       "Carregando": " "
@@ -38,7 +32,6 @@
       "Id": "5",
       "Nome": "Portal Feira",
       "Fila": [
-        "Placa MUQ9437",
         "Placa MUQ9437"
       ],
       "Carregando": " "

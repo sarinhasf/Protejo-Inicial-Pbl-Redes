@@ -28,7 +28,7 @@ type Veiculo struct {
 	Placa        string      `json:"placa"`
 	Localizacao  Localizacao `json:"localizacao"`
 	NivelBateria int         `json:"nivel_bateria"`
-	IdConta      string      `json:"conta_id"`
+	IdConta      int      `json:"conta_id"`
 }
 
 type Dados struct {
@@ -87,13 +87,13 @@ func main() {
 
 	//Envia mensagem
 	mensagem := "VEICULO CONECTADO\n " //tem que terminar com \n se não o servidor não processa
-	fmt.Println("Registro de Veiculo conectado ao servidor:", mensagem)
+	fmt.Printf("Registro de Veiculo %s conectado ao servidor.\n", veiculoID)
 	_, error := conn.Write([]byte(mensagem))
 	if error != nil {
 		fmt.Println("Erro ao enviar mensagem de registro ao servidor:", err)
 		return
 	}
-	fmt.Println("\n====================================================")
+	fmt.Println("\n======================================================================================")
 
 	for { //criando for infinito para manter conexão
 		for _, veiculo := range dados.Veiculos {
@@ -102,6 +102,7 @@ func main() {
 				//define mensagem
 				mensagem := fmt.Sprintf("VEICULO | Placa %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
 					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
+				fmt.Println("Mensagem Encaminhada ao Servidor:")
 				fmt.Println(mensagem)
 				//fmt.Println("Veículo enviado ao servidor:", mensagem)
 				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
@@ -124,6 +125,7 @@ func main() {
 				}
 
 				mensagemRecebida := string(buffer[:n])
+				fmt.Println("\nMensagem recebida do servidor sobre o melhor ponto:")
 				fmt.Println(mensagemRecebida) //exibe mensagem recebida
 
 				if strings.Contains(mensagemRecebida, "Melhor ponto para o veículo") {
@@ -135,8 +137,9 @@ func main() {
 					if err != nil {
 						fmt.Println("Erro ao enviar resposta ao servidor:", err)
 						return
+					} else {
+						fmt.Printf("\nResposta Enviada ao Servidor: [%s].\n", reserva) //exibe mensagem recebida
 					}
-					//fmt.Println("Resposta enviada ao servidor:", reserva)
 
 					// lê resposta do servidor
 					buffer := make([]byte, 1024) //cria buffer para receber dados
@@ -151,7 +154,7 @@ func main() {
 					fmt.Println(mensagemRecebida)
 				}
 			}
-			time.Sleep(1 * time.Minute)
+			time.Sleep(2 * time.Minute)
 		}
 	}
 

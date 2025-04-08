@@ -23,7 +23,7 @@ type Veiculo struct {
 	Placa       string   `json:"placa"`
 	Location    Location `json:"location"`
 	BateryLevel int      `json:"nivel_bateria"`
-	IdConta     string   `json:"conta_id"`
+	IdConta     int   `json:"conta_id"`
 }
 
 type PontoRecarga struct {
@@ -57,7 +57,6 @@ var (
 	dadosVeiculos DadosVeiculos
 	dadosPontos   DadosPontos
 	pontosConns   []net.Conn 					// Lista de conexões dos pontos de recarga
-	//veiculosConns = make(map[string]net.Conn) // Mapeia a placa do veículo para sua conexão
 	veiculosConns = map[string]net.Conn{}
 	mutex         sync.Mutex					//evitar concorrencia nos arquivos
 )

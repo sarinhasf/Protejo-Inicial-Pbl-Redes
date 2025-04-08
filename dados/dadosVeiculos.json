@@ -1,50 +1,49 @@
 {
-    "veiculos": [
-      { 
-        "placa": "MUQ9437",
-        "localizacao": {
-          "latitude": -23.550520,
-          "longitude": -46.633308
-        },
-        "nivel_bateria": 15,
-        "conta_id": "1"
+  "veiculos": [
+    {
+      "placa": "MUQ9437",
+      "location": {
+        "latitude": 0,
+        "longitude": 0
       },
-      {
-        "placa": "DYJ3211",
-        "localizacao": {
-          "latitude": -22.902780,
-          "longitude": -43.187145
-        },
-        "nivel_bateria": 50,
-        "conta_id": "2"
+      "batery_level": 100,
+      "conta_id": 1
+    },
+    {
+      "placa": "DYJ3211",
+      "location": {
+        "latitude": 0,
+        "longitude": 0
       },
-      {
-        "placa": "MXB4354",
-        "localizacao": {
-          "latitude": -72.902780,
-          "longitude": -63.187145
-        },
-        "nivel_bateria": 20,
-        "conta_id": "3"
+      "batery_level": 0,
+      "conta_id": 2
+    },
+    {
+      "placa": "MXB4354",
+      "location": {
+        "latitude": 0,
+        "longitude": 0
       },
-      {
-        "placa": "KFM4784",
-        "localizacao": {
-          "latitude": -72.902780,
-          "longitude": -63.187145
-        },
-        "nivel_bateria": 15,
-        "conta_id": "4"
+      "batery_level": 0,
+      "conta_id": 3
+    },
+    {
+      "placa": "KFM4784",
+      "location": {
+        "latitude": 0,
+        "longitude": 0
       },
-      {
-        "placa": "FBK4493",
-        "localizacao": {
-          "latitude": -72.902780,
-          "longitude": -63.187145
-        },
-        "nivel_bateria": 20,
-        "conta_id": "5"
-      }
-    ]
+      "batery_level": 0,
+      "conta_id": 4
+    },
+    {
+      "placa": "FBK4493",
+      "location": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "batery_level": 0,
+      "conta_id": 5
+    }
+  ]
 }
-  

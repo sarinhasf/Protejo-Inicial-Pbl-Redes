@@ -81,10 +81,59 @@ services:
     stdin_open: true
     tty: true
 
-  #ponto2:
-   # build: ./ponto
-    #container_name: ponto2
-    #depends_on:
-     # - server
-    #environment:
-    #  - ID-PONTO=2
+  ponto2:
+    build: ./ponto
+    container_name: ponto2
+    depends_on:
+      - server
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+    environment:
+      - ID-PONTO=2
+    stdin_open: true
+    tty: true 
+  
+  ponto3:
+    build: ./ponto
+    container_name: ponto3
+    depends_on:
+      - server
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+    environment:
+      - ID-PONTO=3
+    stdin_open: true
+    tty: true 
+  
+  ponto4:
+    build: ./ponto
+    container_name: ponto4
+    depends_on:
+      - server
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+    environment:
+      - ID-PONTO=4
+    stdin_open: true
+    tty: true 
+
+  ponto5:
+    build: ./ponto
+    container_name: ponto5
+    depends_on:
+      - server
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+    environment:
+      - ID-PONTO=5
+    stdin_open: true
+    tty: true 
+

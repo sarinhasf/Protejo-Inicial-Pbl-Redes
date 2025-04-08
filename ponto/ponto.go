@@ -27,7 +27,7 @@ type Pagamentos struct {
 
 // struct para armazenar contas de usuario
 type ContaUser struct {
-	Id         string
+	Id         int
 	Pagamentos []Pagamentos
 }
 
@@ -40,7 +40,7 @@ type Veiculo struct {
 	Placa       string   `json:"placa"`
 	Location    Location `json:"location"`
 	BateryLevel int      `json:"batery_level"`
-	IdConta     string   `json:"conta_id"`
+	IdConta     int   `json:"conta_id"`
 }
 
 // struct para armazenar Dados das contas
@@ -140,7 +140,7 @@ func getVeiculo(placa string) (Veiculo, bool) {
 	return veiculoFinal, controle
 }
 
-func getContaUsuario(id string) (ContaUser, bool) {
+func getContaUsuario(id int) (ContaUser, bool) {
 	var contaFinal ContaUser
 	controle := false
 
@@ -165,19 +165,10 @@ func salvarDadosContas() {
 	}
 }
 
-//func salvarDadosVeiculos() {
-//bytesVeiculos, err := json.MarshalIndent(dadosVeiculos, "", "  ")
-//if err != nil {
-//	fmt.Println("Erro ao converter dadosVeiculos para JSON:", err)
-//}
-
-//err = os.WriteFile("dadosVeiculos.json", bytesVeiculos, 0644)
-//if err != nil {
-//	fmt.Println("Erro ao salvar no arquivo dadosVeiculos.json:", err)
-//}
-//}
-
 func processarFila(idPonto string, filaSlice []string) {
+	mutex.Lock()         //bloqueia acesso concorrente
+	defer mutex.Unlock() //libera depois da execução da função
+
 	// Verifica se a fila não está vazia
 	if len(filaSlice) == 0 {
 		fmt.Println("Fila vazia, nada para processar.")
@@ -199,7 +190,7 @@ func processarFila(idPonto string, filaSlice []string) {
 
 	// Aguarda um minuto
 	fmt.Printf("Carro %s está carregando...\n", carro)
-	time.Sleep(15 * time.Second) // Simula o tempo de carregamento (15 segundos para teste)
+	time.Sleep(30 * time.Second) // Simula o tempo de carregamento (30 segundos para teste)
 
 	// Atualiza o status para "carregado"
 	historico.Status = "carregado"
@@ -216,8 +207,19 @@ func processarFila(idPonto string, filaSlice []string) {
 
 	// Remove o carro da fila
 	filaSlice = filaSlice[1:] // Remove o primeiro carro da fila
-	fmt.Printf("Fila atualizada do ponto %s: %v\n", idPonto, filaSlice)
+	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n", idPonto, carro, filaSlice)
 
+	//Atualizando porcentagem do veiculo
+	linha := carro
+	partes := strings.Split(linha, " ")
+	placa := partes[1]
+	veiculo, achou := getVeiculo(placa)
+	if achou {
+		dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
+		salvarDadosVeiculos(dadosVeiculos)
+	} else {
+		fmt.Printf("Veiculo com a placa %s não encontrado.", placa)
+	}
 }
 
 func salvarHistorico(filename string, historico Historico) {
@@ -233,6 +235,20 @@ func salvarHistorico(filename string, historico Historico) {
 	}
 }
 
+func salvarDadosVeiculos(data DadosVeiculos) {
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		fmt.Println("Erro ao converter dados para JSON:", err)
+		return
+	}
+
+	err = os.WriteFile("dadosVeiculos.json", bytes, 0644)
+	if err != nil {
+		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
+		return
+	}
+}
+
 // passa o Id do veiculo, o Id do ponto e o valor
 func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 	mutex.Lock()         //bloqueia acesso concorrente
@@ -243,17 +259,19 @@ func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 
 	if achou {
 		contaVeiculo, achou2 := getContaUsuario(contaId)
+		//fmt.Printf("\nO ID da conta o veiculo %s é: %d\n", veiculo.Placa, contaVeiculo.Id)
 
 		if achou2 {
 			novoPagamento := Pagamentos{
 				IdPonto: idPonto,
 				Valor:   valor,
 			}
-			contaVeiculo.Pagamentos = append(contaVeiculo.Pagamentos, novoPagamento)
+			//contaVeiculo.Pagamentos = append(contaVeiculo.Pagamentos, novoPagamento)
+			dadosContas.Contas[contaVeiculo.Id-1].Pagamentos = append(dadosContas.Contas[contaVeiculo.Id-1].Pagamentos, novoPagamento)
 
 			// Salva no arquivo contasUsuarios.json
 			salvarDadosContas()
-			fmt.Println("Pagamento registrado com sucesso.")
+			fmt.Printf("Pagamento registrado com sucesso do Veículo %s.", veiculo.Placa)
 		} else {
 			fmt.Printf("Conta do Veiculo %s não encontrada!", veiculo.Placa)
 		}
@@ -328,13 +346,14 @@ func main() {
 		}
 
 		// exibe a fila recebida
-		fmt.Printf("Fila do ponto %s atualizada: %v\n", mensagemRecebida.IdPonto, mensagemRecebida.Fila)
+		fmt.Printf("\nFila do ponto %s atualizada: %v\n", mensagemRecebida.IdPonto, mensagemRecebida.Fila)
 
 		// Processa o primeiro carro da fila recebida
 		processarFila(mensagemRecebida.IdPonto, mensagemRecebida.Fila)
 
 		precoRecarga := calculaPrecoRecarga(dadosVeiculos.Veiculos[0].BateryLevel)
 		preco := fmt.Sprintf("PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
+		efetivarPagamento(dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
 
 		// Envia o preço da recarga de volta ao servidor
 		_, err = conn.Write([]byte(preco))
@@ -342,6 +361,5 @@ func main() {
 			fmt.Println("Erro ao enviar mensagem:", err)
 		}
 
-		efetivarPagamento(dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
 	}
 }

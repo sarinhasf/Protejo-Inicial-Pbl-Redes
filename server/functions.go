@@ -99,40 +99,15 @@ func sendFila(idPonto string) {
 
 			// envia json para o cliente
 			_, err = pontosConns[0].Write(append(mensagemJson, '\n')) //\n indica o fim da mensagem
+			//fmt.Printf("\nEnviado Fila Atualizada para o ponto %s: %s\n", idPonto, string(mensagemJson))
 			if err != nil {
 				fmt.Println("Erro ao enviar mensagem:", err)
 				return
 			}
 
-			fmt.Printf("Mensagem enviada para o ponto %s: %s\n", idPonto, string(mensagemJson))
 			break
 		}
 	}
-}
-
-func sendToVehicle(placaVeiculo string, mensagem string) {
-	// Procura o veículo na lista de veículos cadastrados
-	_, encontrado := getVeiculo(placaVeiculo)
-	if !encontrado {
-		fmt.Printf("Erro: Veículo com placa %s não encontrado\n", placaVeiculo)
-		return
-	}
-
-	// Verifica se o veículo está conectado
-	conn, conectado := veiculosConns[placaVeiculo]
-	if !conectado {
-		fmt.Printf("Erro: Veículo com placa %s não está conectado\n", placaVeiculo)
-		return
-	}
-
-	// Envia a mensagem para o veículo
-	_, err := conn.Write([]byte(mensagem + "\n")) // '\n' indica o fim da mensagem
-	if err != nil {
-		fmt.Println("Erro ao enviar mensagem para o veículo:", err)
-		return
-	}
-
-	fmt.Printf("Mensagem enviada para o veículo %s: %s\n", placaVeiculo, mensagem)
 }
 
 func addFila(idPonto string, placaVeiculo string) {
@@ -147,7 +122,7 @@ func addFila(idPonto string, placaVeiculo string) {
 			encontrado = true
 
 			// imprime a fila atualizada do ponto
-			fmt.Printf("Fila atualizada do ponto %s: %v\n", idPonto, dadosPontos.Pontos[i].Fila)
+			fmt.Printf("\nFila atualizada do ponto %s, adicionando o veículo: %v\n", idPonto, dadosPontos.Pontos[i].Fila)
 
 			sendFila(idPonto) // Envia a fila atualizada para o ponto de recarga
 
@@ -158,19 +133,5 @@ func addFila(idPonto string, placaVeiculo string) {
 		salvarDados(dadosPontos) // Salva os dados atualizados no arquivo JSON
 	} else {
 		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado\n", idPonto)
-	}
-}
-
-func removeFila(idPonto string, idCarro string) {
-	for i, ponto := range dadosPontos.Pontos {
-		if ponto.Id == idPonto {
-			for j, carro := range ponto.Fila {
-				if carro == idCarro {
-					// Remove o carro da fila
-					dadosPontos.Pontos[i].Fila = append(ponto.Fila[:j], ponto.Fila[j+1:]...)
-					return
-				}
-			}
-		}
 	}
 }
