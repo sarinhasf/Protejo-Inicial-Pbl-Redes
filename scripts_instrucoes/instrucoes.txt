@@ -1,0 +1,43 @@
+----#Instruções para rodar o projeto#----
+
+1- Use o docker-compose build para bildar as iamgens do projeto e o docker-compose create: criar os containers sem iniciar. 
+Obs. Use o comando: docker ps -a, para verifica os containers criados;
+
+2- Assim, aos poucos podemos ir executanco os containers. Primeiro execute o service usando: 
+docker-compose start server
+
+3- Criei todos pontos para se conectarem ao servidor. Executando o comando:
+docker-compose start ponto ponto2 ponto3 ponto4 ponto5
+
+4- Agora adicione os veiculos: 
+docker-compose start veiculo veiculo2...
+
+5- Verifique sempre os logs usando: docker logs server
+
+6- entre no terminal interativo dos pontos para dizer se eles irão entrar na fila: 
+docker start -ai veiculo 
+
+OBS. Para tornar o processo mais fácil execute os SCRIPTS
+_____________________________________________________________________________________________________________________________
+
+---#Como executar scripts no [WINDOWNS]#---
+
+1- Caso o PowerShell bloquear a execução por segurança, você precisará executa-lo como adm e rodar:
+Set-ExecutionPolicy RemoteSigned
+
+2- Após isso entre na pasta do projeto usando CD nome_pasta
+
+3- Após isso execute o script para windowns (com final ps1):
+.\iniciaContainers.ps1
+______________________________________________________________________________________________________________________________
+
+---#Como executar scripts no [LINUX]#---
+
+1- Vá ate a pasta com comando CD
+OBS. pode verificar os arquivos da pasta usando comando ls
+
+2- Dê permissão para rodar seu script: chmod +x iniciaContainers.sh
+
+3- Após isso execute o script para linuz (com final sh):
+./iniciaContainers.sh
+

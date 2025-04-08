@@ -27,7 +27,9 @@
     {
       "Id": "5",
       "Nome": "Portal Feira",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     }
   ]

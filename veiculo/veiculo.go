@@ -132,6 +132,8 @@ func main() {
 					fmt.Println("Deseja entrar na fila(S/N)?")
 					var reserva string
 					fmt.Scanln(&reserva) //lê resposta do usuário
+					//reserva := "sim"
+					fmt.Printf("O veículo respondeu que %s.", reserva)
 
 					_, err := conn.Write([]byte("VEICULO " + reserva + "\n")) //envia resposta
 					if err != nil {
@@ -153,9 +155,11 @@ func main() {
 					mensagemRecebida = strings.TrimPrefix(mensagemRecebida, "PONTO: ")
 					fmt.Println(mensagemRecebida)
 				}
+	
+				//time.Sleep(1 * time.Minute)
 			}
-			time.Sleep(2 * time.Minute)
 		}
+		break
 	}
 
 }
