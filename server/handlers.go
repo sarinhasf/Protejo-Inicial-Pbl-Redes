@@ -100,6 +100,8 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 		//fmt.Println("numero do ponto:", ponto)
 		fmt.Println("\n======================================================================================")
 		fmt.Printf("Veículo %s finalizou recarga no ponto %s, e seu pagamento foi registrado com sucesso!\n\n", placa, ponto)
+
+		removeFila(ponto, placa)
 	}
 }
 

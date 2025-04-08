@@ -118,7 +118,8 @@ func addFila(idPonto string, placaVeiculo string) {
 
 	for i, ponto := range dadosPontos.Pontos {
 		if strings.TrimSpace(ponto.Id) == strings.TrimSpace(idPonto) {
-			dadosPontos.Pontos[i].Fila = append(ponto.Fila, placaVeiculo)
+			placaTratada := strings.TrimPrefix(placaVeiculo, "Placa ")
+			dadosPontos.Pontos[i].Fila = append(ponto.Fila, placaTratada)
 			encontrado = true
 
 			// imprime a fila atualizada do ponto
@@ -133,5 +134,47 @@ func addFila(idPonto string, placaVeiculo string) {
 		salvarDados(dadosPontos) // Salva os dados atualizados no arquivo JSON
 	} else {
 		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado\n", idPonto)
+	}
+}
+
+func removeFila(idPonto string, placaVeiculo string) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	encontrado := false
+	placaRemovida := false
+
+	for i, ponto := range dadosPontos.Pontos {
+		if strings.TrimSpace(ponto.Id) == strings.TrimSpace(idPonto) {
+			encontrado = true
+
+			// Filtra a fila removendo a placa
+			novaFila := []string{}
+			fmt.Println("fila:", ponto.Fila)
+			for _, placa := range ponto.Fila {
+				// Remover o prefixo "Placa "
+				placaLimpa := strings.TrimPrefix(strings.TrimSpace(placa), "Placa ")
+				if placaLimpa != strings.TrimSpace(placaVeiculo) {
+					novaFila = append(novaFila, placa)
+				} else {
+					placaRemovida = true
+				}
+			}
+
+			dadosPontos.Pontos[i].Fila = novaFila
+
+			if placaRemovida {
+				fmt.Printf("Veículo com placa %s removido da fila do ponto %s.\n", placaVeiculo, idPonto)
+				sendFila(idPonto)
+				salvarDados(dadosPontos)
+			} else {
+				fmt.Printf("Placa %s não encontrada na fila do ponto %s.\n", placaVeiculo, idPonto) //
+			}
+
+			break
+		}
+	}
+	if !encontrado {
+		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado.\n", idPonto)
 	}
 }

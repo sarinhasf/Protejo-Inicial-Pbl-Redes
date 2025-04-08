@@ -88,6 +88,7 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
     environment:
       - ID-PONTO=1
     stdin_open: true
@@ -102,6 +103,7 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
     environment:
       - ID-PONTO=2
     stdin_open: true
@@ -116,6 +118,7 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
     environment:
       - ID-PONTO=3
     stdin_open: true
@@ -130,6 +133,7 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
     environment:
       - ID-PONTO=4
     stdin_open: true
@@ -144,6 +148,7 @@ services:
       - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
       - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
       - ./dados/contasUsuarios.json:/app/contasUsuarios.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
     environment:
       - ID-PONTO=5
     stdin_open: true
