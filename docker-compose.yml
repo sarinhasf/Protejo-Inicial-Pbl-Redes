@@ -37,47 +37,47 @@ services:
     stdin_open: true
     tty: true
 
-  veiculo3:
-    build: ./veiculo
-    container_name: veiculo3
-    depends_on:
-      - server
-    environment:
-      - PLACA=MXB4354
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
-      - ./dados/dadosPontos.json:/app/dadosPontos.json
-    stdin_open: true
-    tty: true
+ # veiculo3:
+   # build: ./veiculo
+   # container_name: veiculo3
+   # depends_on:
+   #   - server
+   # environment:
+   #   - PLACA=MXB4354
+   # volumes:
+   #   - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+   #   - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+   #   - ./dados/dadosPontos.json:/app/dadosPontos.json
+   # stdin_open: true
+   # tty: true
 
-  veiculo4:
-    build: ./veiculo
-    container_name: veiculo4
-    depends_on:
-      - server
-    environment:
-      - PLACA=KFM4784
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
-      - ./dados/dadosPontos.json:/app/dadosPontos.json
-    stdin_open: true
-    tty: true
+#  veiculo4:
+   # build: ./veiculo
+   # container_name: veiculo4
+   # depends_on:
+   #   - server
+   # environment:
+   #   - PLACA=KFM4784
+   # volumes:
+   #   - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+   #   - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+   #   - ./dados/dadosPontos.json:/app/dadosPontos.json
+   # stdin_open: true
+   # tty: true
 
-  veiculo5:
-    build: ./veiculo
-    container_name: veiculo5
-    depends_on:
-      - server
-    environment:
-      - PLACA=FBK4493
-    volumes:
-      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
-      - ./dados/dadosPontos.json:/app/dadosPontos.json
-    stdin_open: true
-    tty: true
+ # veiculo5:
+  #  build: ./veiculo
+  #  container_name: veiculo5
+   # depends_on:
+   #   - server
+   # environment:
+    #  - PLACA=FBK4493
+    #volumes:
+   #   - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+    #  - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+    #  - ./dados/dadosPontos.json:/app/dadosPontos.json
+    #stdin_open: true
+   # tty: true
   
   ponto:
     build: ./ponto

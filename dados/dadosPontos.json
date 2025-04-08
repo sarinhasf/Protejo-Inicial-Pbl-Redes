@@ -9,31 +9,27 @@
     {
       "Id": "2",
       "Nome": "Tomba",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "3",
       "Nome": "Jóia",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "4",
       "Nome": "Rodoviária",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     },
     {
       "Id": "5",
       "Nome": "Portal Feira",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     }
   ]

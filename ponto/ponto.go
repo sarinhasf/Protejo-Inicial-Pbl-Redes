@@ -366,7 +366,7 @@ func calculaPrecoRecarga(nivelBateria int) float64 {
 func main() {
 	leArquivoJsonContas()
 	leArquivoJsonVeiculos()
-	leArquivoJsonPontos()
+	//leArquivoJsonPontos()
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
