@@ -1,9 +1,16 @@
-## Sistema de Recarga de Carros Elétricos Inteligente
+<img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=9932CC&height=120&section=header"/>
+<div align="center">  
+<h1>Sistema de Recarga de Carros Elétricos Inteligente 🚗⛽</h1>
+ </div>
 
-<p align="center"> Este projeto visa criar o protótipo inicial de ma infraestrutura capaz de otimizar o uso dos pontos de recarga, indicar aos motoristas os locais mais adequados com base na distância e disponibilidade, permitir reservas, realizar liberações automáticas após o carregamento e registrar os dados para posterior pagamento. O sistema que promove uma comunicação inteligente, padronizada e em tempo real entre os veículos, nuvem e pontos de recarga. </p>
+ <div align="center">  
+  <img width=20% src="http://img.shields.io/static/v1?label=STATUS&message=FINALIZADO&color=9932CC&style=for-the-badge"/>
+</div>
+ 
+<p align="center"> Este projeto visa criar o protótipo inicial de uma infraestrutura capaz de otimizar o uso dos pontos de recarga, indicar aos motoristas os locais mais adequados com base na distância e disponibilidade, permitir reservas, realizar liberações automáticas após o carregamento e registrar os dados para posterior pagamento. O sistema que promove uma comunicação inteligente, padronizada e em tempo real entre os veículos, nuvem e pontos de recarga. </p>
 
 
-## Sumário
+## Sumário 📖
 
 - [Introdução](#introdução)
 - [Fundamentos Teóricos](#fundamentos-teóricos)
