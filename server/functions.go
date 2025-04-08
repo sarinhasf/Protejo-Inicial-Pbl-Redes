@@ -98,7 +98,12 @@ func sendFila(idPonto string) {
 			}
 
 			// envia json para o cliente
-			_, err = pontosConns[0].Write(append(mensagemJson, '\n')) //\n indica o fim da mensagem
+			conn, ok := pontosConns[idPonto]
+			if !ok {
+				fmt.Printf("Erro: Conexão para o ponto %s não encontrada no mapa!\n", idPonto)
+				return
+			}
+			_, err = conn.Write(append(mensagemJson, '\n')) //\n indica o fim da mensagem
 			//fmt.Printf("\nEnviado Fila Atualizada para o ponto %s: %s\n", idPonto, string(mensagemJson))
 			if err != nil {
 				fmt.Println("Erro ao enviar mensagem:", err)

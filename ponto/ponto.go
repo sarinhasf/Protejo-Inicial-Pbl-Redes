@@ -385,7 +385,7 @@ func main() {
 	}
 
 	//Envia mensagem
-	mensagem := "PONTO DE RECARGA CONECTADO\n " //tem que terminar com \n se não o servidor não processa
+	mensagem := "PONTO DE RECARGA CONECTADO," + pontoID + "\n" //tem que terminar com \n se não o servidor não processa
 	fmt.Printf("Registro de Ponto de recarga %s conectado ao servidor.\n", pontoID)
 
 	_, error := conn.Write([]byte(mensagem))

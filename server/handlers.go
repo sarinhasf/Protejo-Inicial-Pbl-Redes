@@ -11,7 +11,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 	conn := sessao.Conn
 
 	if strings.Contains(mensagem, "VEICULO CONECTADO") {
-		pontosConns = append(pontosConns, conn)
+		//pontosConns = append(pontosConns, conn)
 		fmt.Println("Novo veiculo conectado!")
 
 	} else if strings.HasPrefix(mensagem, "VEICULO |") {
@@ -36,6 +36,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 		}
 
 		if len(filaPonto) == 0 {
+			fmt.Printf("\nCHEGA AQ 1\n")
 			fmt.Printf("\nMensagem Enviada ao Veículo %s do melhor ponto.\n", placa)
 			msg := fmt.Sprintf("Melhor ponto para o veículo %s: Ponto %s - Distância: %.2fKm - Fila: %d veículos \n", placa, nomePontoProx, distance, len(filaPonto))
 			conn.Write([]byte(msg))
@@ -45,6 +46,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 			sessao.MelhorPontoNome = nomePontoProx
 
 		} else if veiculo, ok := getVeiculo(placa); ok {
+			fmt.Printf("\nCHEGA AQ 2\n")
 			msg, melhorPonto := analiseTodosPontos(lat, lon, veiculo.BateryLevel, placa)
 			conn.Write([]byte(msg))
 
@@ -79,9 +81,13 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 func handlePonto(sessao *SessaoCliente, mensagem string) {
 	conn := sessao.Conn
 
-	if strings.HasPrefix(mensagem, "PONTO DE RECARGA CONECTADO") {
-		pontosConns = append(pontosConns, conn)
-		fmt.Println("Novo ponto de recarga conectado!")
+	if strings.HasPrefix(mensagem, "PONTO DE RECARGA CONECTADO,") {
+		linha := mensagem
+		partes := strings.Split(linha, ",")
+		idPonto := partes[1]
+		//pontosConns = append(pontosConns, conn)
+		pontosConns[idPonto] = conn //adicionar no dicionario associando ao id do ponto
+		fmt.Printf("Novo ponto de recarga conectado: Ponto %s.\n", idPonto)
 
 	} else if strings.HasPrefix(mensagem, "PONTO: Veiculo ") {
 		fmt.Println(mensagem)

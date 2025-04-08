@@ -56,7 +56,7 @@ type SessaoCliente struct {
 var (
 	dadosVeiculos DadosVeiculos
 	dadosPontos   DadosPontos
-	pontosConns   []net.Conn 					// Lista de conexões dos pontos de recarga
+	pontosConns 	map[string]net.Conn // Lista de conexões dos pontos de recarga
 	veiculosConns = map[string]net.Conn{}
 	mutex         sync.Mutex					//evitar concorrencia nos arquivos
 )
@@ -70,6 +70,8 @@ const (
 func main() {
 	leArquivoJsonVeiculos() //lendo os arquivos dos veiculos
 	leArquivoJsonPontos()   //lendo os arquivos dos pontos
+
+	pontosConns = make(map[string]net.Conn) //inicializa os pontosConns
 
 	//Verificação se o servidor iniciou corretamente
 	listener, err := net.Listen("tcp", ":8080")
