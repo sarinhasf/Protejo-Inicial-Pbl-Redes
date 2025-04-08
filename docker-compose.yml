@@ -22,50 +22,62 @@ services:
       - ./dados/dadosPontos.json:/app/dadosPontos.json
     stdin_open: true
     tty: true
+  
+  veiculo2:
+    build: ./veiculo
+    container_name: veiculo2
+    depends_on:
+      - server
+    environment:
+      - PLACA=DYJ3211
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
+    stdin_open: true
+    tty: true
 
-  #veiculo2:
-   # build: ./veiculo
-    #container_name: veiculo2
-    #depends_on:
-     # - server
-    #environment:
-    #  - ID-VEICULO=2
-    #volumes:
-     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  veiculo3:
+    build: ./veiculo
+    container_name: veiculo3
+    depends_on:
+      - server
+    environment:
+      - PLACA=MXB4354
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
+    stdin_open: true
+    tty: true
 
-  #veiculo3:
-  #  build: ./veiculo
-   # container_name: veiculo3
-    #depends_on:
-     # - server
-    #environment:
-    #  - ID-VEICULO=3
-    #volumes:
-     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  veiculo4:
+    build: ./veiculo
+    container_name: veiculo4
+    depends_on:
+      - server
+    environment:
+      - PLACA=KFM4784
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
+    stdin_open: true
+    tty: true
 
-  #veiculo4:
-  #  build: ./veiculo
-   # container_name: veiculo4
-    #depends_on:
-     # - server
-    #environment:
-    #  - ID-VEICULO=4
-    #volumes:
-     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
-
-  #veiculo5:
-   # build: ./veiculo
-    #container_name: veiculo5
-    #depends_on:
-     # - server
-    #environment:
-    #  - ID-VEICULO=5
-    #volumes:
-     # - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
-      #- ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+  veiculo5:
+    build: ./veiculo
+    container_name: veiculo5
+    depends_on:
+      - server
+    environment:
+      - PLACA=FBK4493
+    volumes:
+      - ./dados/MapaDeFeira.csv:/app/MapaDeFeira.csv
+      - ./dados/dadosVeiculos.json:/app/dadosVeiculos.json
+      - ./dados/dadosPontos.json:/app/dadosPontos.json
+    stdin_open: true
+    tty: true
   
   ponto:
     build: ./ponto

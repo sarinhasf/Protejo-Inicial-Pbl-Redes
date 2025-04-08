@@ -40,7 +40,7 @@ type Veiculo struct {
 	Placa       string   `json:"placa"`
 	Location    Location `json:"location"`
 	BateryLevel int      `json:"batery_level"`
-	IdConta     int   `json:"conta_id"`
+	IdConta     int      `json:"conta_id"`
 }
 
 // struct para armazenar Dados das contas
@@ -52,6 +52,17 @@ type DadosVeiculos struct {
 	Veiculos []Veiculo `json:"veiculos"`
 }
 
+type PontoRecarga struct {
+	Id         string
+	Nome       string
+	Fila       []string
+	Carregando string
+}
+
+type DadosPontos struct {
+	Pontos []PontoRecarga `json:"pontos"`
+}
+
 // Estrutura para o histórico do ponto
 type Historico struct {
 	Carro  string `json:"carro"`
@@ -60,6 +71,8 @@ type Historico struct {
 
 var dadosContas DadosContas
 var dadosVeiculos DadosVeiculos
+var dadosPontos DadosPontos
+
 var mutex sync.Mutex //evitar concorrencia nos arquivos
 
 func leArquivoJsonContas() {
@@ -70,6 +83,20 @@ func leArquivoJsonContas() {
 	}
 
 	err = json.Unmarshal(bytes, &dadosContas)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
+}
+
+func leArquivoJsonPontos() {
+	bytes, err := os.ReadFile("dadosPontos.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dadosPontos)
 	if err != nil {
 		fmt.Println("Erro ao decodificar JSON:", err)
 		return
@@ -207,6 +234,7 @@ func processarFila(idPonto string, filaSlice []string) {
 
 	// Remove o carro da fila
 	filaSlice = filaSlice[1:] // Remove o primeiro carro da fila
+	//removerFila(placa)
 	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n", idPonto, carro, filaSlice)
 
 	//Atualizando porcentagem do veiculo
@@ -219,6 +247,35 @@ func processarFila(idPonto string, filaSlice []string) {
 		salvarDadosVeiculos(dadosVeiculos)
 	} else {
 		fmt.Printf("Veiculo com a placa %s não encontrado.", placa)
+	}
+}
+
+func removerFila(idPonto string) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	encontrado := false
+	for i, ponto := range dadosPontos.Pontos {
+		if strings.TrimSpace(ponto.Id) == strings.TrimSpace(idPonto) {
+			if len(ponto.Fila) == 0 {
+				fmt.Printf("A fila do ponto %s está vazia. Nenhum veículo para remover.\n", idPonto)
+				return
+			}
+			// Remove o primeiro veículo da fila
+			removido := ponto.Fila[0]
+			dadosPontos.Pontos[i].Fila = ponto.Fila[1:]
+
+			fmt.Printf("\nVeículo %s removido da fila do ponto %s.\n", removido, idPonto)
+			fmt.Printf("Fila atualizada do ponto %s: %v\n", idPonto, dadosPontos.Pontos[i].Fila)
+
+			encontrado = true
+			break
+		}
+	}
+
+	if encontrado {
+		salvarDadosPontos(dadosPontos)
+	} else {
+		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado.\n", idPonto)
 	}
 }
 
@@ -243,6 +300,20 @@ func salvarDadosVeiculos(data DadosVeiculos) {
 	}
 
 	err = os.WriteFile("dadosVeiculos.json", bytes, 0644)
+	if err != nil {
+		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
+		return
+	}
+}
+
+func salvarDadosPontos(data DadosPontos) {
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		fmt.Println("Erro ao converter dados para JSON:", err)
+		return
+	}
+
+	err = os.WriteFile("dadosPontos.json", bytes, 0644)
 	if err != nil {
 		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
 		return
@@ -295,6 +366,7 @@ func calculaPrecoRecarga(nivelBateria int) float64 {
 func main() {
 	leArquivoJsonContas()
 	leArquivoJsonVeiculos()
+	leArquivoJsonPontos()
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede

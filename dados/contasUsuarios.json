@@ -4,11 +4,11 @@
       "Id": 1,
       "Pagamentos": [
         {
-          "IdPonto": "5",
+          "IdPonto": "2",
           "Valor": 0
         },
         {
-          "IdPonto": "5",
+          "IdPonto": "2",
           "Valor": 0
         }
       ]

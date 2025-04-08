@@ -9,7 +9,9 @@
     {
       "Id": "2",
       "Nome": "Tomba",
-      "Fila": [],
+      "Fila": [
+        "Placa MUQ9437"
+      ],
       "Carregando": " "
     },
     {
@@ -31,9 +33,7 @@
     {
       "Id": "5",
       "Nome": "Portal Feira",
-      "Fila": [
-        "Placa MUQ9437"
-      ],
+      "Fila": [],
       "Carregando": " "
     }
   ]

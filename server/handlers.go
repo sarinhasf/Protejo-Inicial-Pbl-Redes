@@ -37,7 +37,6 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 
 		if len(filaPonto) == 0 {
 			fmt.Printf("\nMensagem Enviada ao Veículo %s do melhor ponto.\n", placa)
-			//fmt.Printf("\nNome do ponto + prox: %s, e ID: %s\n", nomePontoProx, pontoID)
 			msg := fmt.Sprintf("Melhor ponto para o veículo %s: Ponto %s - Distância: %.2fKm - Fila: %d veículos \n", placa, nomePontoProx, distance, len(filaPonto))
 			conn.Write([]byte(msg))
 
