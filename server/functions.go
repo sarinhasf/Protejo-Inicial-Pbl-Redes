@@ -155,7 +155,7 @@ func removeFila(idPonto string, placaVeiculo string) {
 
 			// Filtra a fila removendo a placa
 			novaFila := []string{}
-			fmt.Println("fila:", ponto.Fila)
+			//fmt.Println("fila:", ponto.Fila)
 			for _, placa := range ponto.Fila {
 				// Remover o prefixo "Placa "
 				placaLimpa := strings.TrimPrefix(strings.TrimSpace(placa), "Placa ")
@@ -170,7 +170,7 @@ func removeFila(idPonto string, placaVeiculo string) {
 
 			if placaRemovida {
 				fmt.Printf("Veículo com placa %s removido da fila do ponto %s.\n", placaVeiculo, idPonto)
-				sendFila(idPonto)
+				//sendFila(idPonto)
 				salvarDados(dadosPontos)
 			} else {
 				fmt.Printf("Placa %s não encontrada na fila do ponto %s.\n", placaVeiculo, idPonto) //

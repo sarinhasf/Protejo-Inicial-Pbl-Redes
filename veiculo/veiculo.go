@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json" //pacote para manipulação de JSON
 	"fmt"           //pacote para formatação de strings
 	"net"           //pacote para comunicação em rede
 	"os"            //pacote para manipulação de arquivos
@@ -35,40 +34,9 @@ type Dados struct {
 	Veiculos []Veiculo `json:"veiculos"`
 }
 
-// Lê o arquivo JSON e armazena os dados na variável global "dados"
-func leArquivoJson(filename string) {
-	// Verifica se o arquivo existe
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		fmt.Println("Arquivo JSON não encontrado:", filename)
-		return
-	}
-	// Ler o arquivo JSON usando os.ReadFile
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		fmt.Println("Erro ao abrir arquivo JSON:", err)
-		return
-	}
-
-	// Passando dados do JSON para struct criada
-	err = json.Unmarshal(bytes, &dados)
-	if err != nil {
-		fmt.Println("Erro ao decodificar JSON:", err)
-		return
-	}
-}
-
 func main() {
 	leArquivoJson("dadosVeiculos.json")
-
-	polygon, err := readPolygon("MapaDeFeira.csv")
-	if err != nil {
-		fmt.Println("Erro ao ler arquivo CSV:", err)
-		return
-	}
-	if len(polygon) == 0 {
-		fmt.Println("Nenhum ponto encontrado no arquivo CSV")
-		return
-	}
+	polygon := leMapaFeira()
 
 	// Lendo a variável de ambiente do docker compose
 	veiculoID := os.Getenv("PLACA")
@@ -79,13 +47,15 @@ func main() {
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
-	conn, err := net.Dial("tcp", "server:8080")
+	//conn, err := net.Dial("tcp", "server:8080")
+	conn, err := net.Dial("tcp", "10.65.133.231:8080")
+
 	if err != nil {
 		fmt.Println("Erro ao conectar ao servidor:", err)
 		return
 	}
 
-	//Envia mensagem
+	//Envia mensagem para servidor
 	mensagem := "VEICULO CONECTADO\n " //tem que terminar com \n se não o servidor não processa
 	fmt.Printf("Registro de Veiculo %s conectado ao servidor.\n", veiculoID)
 	_, error := conn.Write([]byte(mensagem))
@@ -93,78 +63,83 @@ func main() {
 		fmt.Println("Erro ao enviar mensagem de registro ao servidor:", err)
 		return
 	}
-	fmt.Println("\n======================================================================================")
 
-	for _, veiculo := range dados.Veiculos {
-		if veiculo.Placa == veiculoID {
-			fmt.Printf("\nO nível atual de bateria do veículo %s é: %d.\n", veiculoID, veiculo.NivelBateria)
+	for {
+		for i, veiculo := range dados.Veiculos { //Itera entre todos dados para pegar os dados desse veiculo especifico
+			if veiculo.Placa == veiculoID {
+				fmt.Printf("\nO nível atual de bateria do veículo %s é: %d.\n", veiculoID, veiculo.NivelBateria)
+				fmt.Println("\n======================================================================================")
 
-			if veiculo.NivelBateria <= 20 {
-				randomCoord := randomPointInBoundingBox(polygon)
-				//define mensagem
-				mensagem := fmt.Sprintf("VEICULO | Placa %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
-					veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
-				fmt.Println("Mensagem Encaminhada ao Servidor:")
-				fmt.Println(mensagem)
-				//fmt.Println("Veículo enviado ao servidor:", mensagem)
-				time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
+				if veiculo.NivelBateria <= 20 {
 
-				_, err := conn.Write([]byte(mensagem)) //envia mensagem
-				if err != nil {
-					fmt.Println("Erro ao enviar mensagem:", err)
-					return
-				}
+					randomCoord := randomPointInBoundingBox(polygon)
+					//define mensagem
+					mensagem := fmt.Sprintf("VEICULO | Placa %s | Bateria: %d%% | Latitude: %f | Longitude: %f \n",
+						veiculo.Placa, veiculo.NivelBateria, randomCoord.Latitude, randomCoord.Longitude)
+					fmt.Println("Mensagem Encaminhada ao Servidor:")
+					fmt.Println(mensagem)
+					time.Sleep(5 * time.Second) //espera alguns segundos antes de enviar de fato a mensagem
 
-				for { //cria loop para pegar as informações
-					buffer := make([]byte, 1024) // cria buffer para receber dados
-					n, err := conn.Read(buffer)
+					_, err := conn.Write([]byte(mensagem)) //envia mensagem
 					if err != nil {
-						if err.Error() == "EOF" { // Conexão encerrada pelo servidor
-							fmt.Println("Conexão encerrada pelo servidor.")
-							break
-						}
-						fmt.Println("Erro ao receber mensagem do servidor:", err)
-						continue
+						fmt.Println("Erro ao enviar mensagem:", err)
+						return
 					}
 
-					mensagemRecebida := string(buffer[:n])
-					fmt.Println("\nMensagem recebida do servidor sobre o melhor ponto:")
-					fmt.Println(mensagemRecebida) //exibe mensagem recebida
-
-					if strings.Contains(mensagemRecebida, "Melhor ponto para o veículo") {
-						fmt.Println("Deseja entrar na fila(S/N)?")
-						var reserva string
-						fmt.Scanln(&reserva) //lê resposta do usuário
-						//reserva := "sim"
-						fmt.Printf("O veículo respondeu que %s.", reserva)
-
-						_, err := conn.Write([]byte("VEICULO " + reserva + "\n")) //envia resposta
-						if err != nil {
-							fmt.Println("Erro ao enviar resposta ao servidor:", err)
-							return
-						} else {
-							fmt.Printf("\nResposta Enviada ao Servidor: [%s].\n", reserva) //exibe mensagem recebida
-						}
-
-						// lê resposta do servidor
-						buffer := make([]byte, 1024) //cria buffer para receber dados
+					for { //cria loop para pegar as informações
+						buffer := make([]byte, 1024) // cria buffer para receber dados
 						n, err := conn.Read(buffer)
 						if err != nil {
+							if err.Error() == "EOF" { // Conexão encerrada pelo servidor
+								fmt.Println("Conexão encerrada pelo servidor.")
+								break
+							}
 							fmt.Println("Erro ao receber mensagem do servidor:", err)
-							return
+							continue
 						}
-						fmt.Println(string(buffer[:n])) //exibe mensagem recebida
 
-					} else if strings.Contains(mensagemRecebida, "PONTO: Veiculo") {
-						mensagemRecebida = strings.TrimPrefix(mensagemRecebida, "PONTO: ")
-						fmt.Println(mensagemRecebida)
-						break
+						mensagemRecebida := string(buffer[:n])
+						fmt.Println("\nMensagem recebida do servidor sobre o melhor ponto:")
+						fmt.Println(mensagemRecebida) //exibe mensagem recebida
+
+						if strings.Contains(mensagemRecebida, "Melhor ponto para o veículo") {
+							fmt.Println("Deseja entrar na fila(S/N)?")
+							var reserva string
+							fmt.Scanln(&reserva) //lê resposta do usuário
+							//reserva := "sim"
+							fmt.Printf("O veículo respondeu que %s.", reserva)
+
+							_, err := conn.Write([]byte("VEICULO " + reserva + "\n")) //envia resposta
+							if err != nil {
+								fmt.Println("Erro ao enviar resposta ao servidor:", err)
+								return
+							} else {
+								fmt.Printf("\nResposta Enviada ao Servidor: [%s].\n", reserva) //exibe mensagem recebida
+							}
+
+							// lê resposta do servidor
+							buffer := make([]byte, 1024) //cria buffer para receber dados
+							n, err := conn.Read(buffer)
+							if err != nil {
+								fmt.Println("Erro ao receber mensagem do servidor:", err)
+								return
+							}
+							fmt.Println(string(buffer[:n])) //exibe mensagem recebida
+
+							time.Sleep(20 * time.Second) //espera alguns segundos antes de atualizar
+							dados.Veiculos[i].NivelBateria = 100   //atualiza nivel de bateria
+							salvarDadosVeiculos(dados)
+							break                        //sai do for de receber mensagem
+						}
+
 					}
+
+				} else {
+					fmt.Printf("\nA bateria de veículo não está crítica.\n")
+					time.Sleep(1 * time.Minute) //espera alguns segundos antes de verificar bateria novamente
+					//break
 				}
 
-			} else {
-				fmt.Printf("\nA bateria de veículo não está crítica.\n")
-				break
 			}
 		}
 	}

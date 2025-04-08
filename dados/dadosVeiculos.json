@@ -2,47 +2,47 @@
   "veiculos": [
     {
       "placa": "MUQ9437",
-      "location": {
+      "localizacao": {
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "nivel_bateria": 100,
       "conta_id": 1
     },
     {
       "placa": "DYJ3211",
-      "location": {
+      "localizacao": {
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "nivel_bateria": 0,
       "conta_id": 2
     },
     {
       "placa": "MXB4354",
-      "location": {
+      "localizacao": {
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "nivel_bateria": 0,
       "conta_id": 3
     },
     {
       "placa": "KFM4784",
-      "location": {
+      "localizacao": {
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "nivel_bateria": 0,
       "conta_id": 4
     },
     {
       "placa": "FBK4493",
-      "location": {
+      "localizacao": {
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "nivel_bateria": 0,
       "conta_id": 5
     }
   ]

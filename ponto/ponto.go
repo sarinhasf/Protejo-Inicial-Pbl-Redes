@@ -234,49 +234,16 @@ func processarFila(idPonto string, filaSlice []string) {
 
 	// Remove o carro da fila
 	filaSlice = filaSlice[1:] // Remove o primeiro carro da fila
-	//removerFila(placa)
-	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n", idPonto, carro, filaSlice)
+	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n\n", idPonto, carro, filaSlice)
 
 	//Atualizando porcentagem do veiculo
-	linha := carro
-	partes := strings.Split(linha, " ")
-	placa := partes[1]
-	veiculo, achou := getVeiculo(placa)
-	if achou {
-		dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
-		salvarDadosVeiculos(dadosVeiculos)
-	} else {
-		fmt.Printf("Veiculo com a placa %s não encontrado.", placa)
-	}
-}
-
-func removerFila(idPonto string) {
-	mutex.Lock()
-	defer mutex.Unlock()
-	encontrado := false
-	for i, ponto := range dadosPontos.Pontos {
-		if strings.TrimSpace(ponto.Id) == strings.TrimSpace(idPonto) {
-			if len(ponto.Fila) == 0 {
-				fmt.Printf("A fila do ponto %s está vazia. Nenhum veículo para remover.\n", idPonto)
-				return
-			}
-			// Remove o primeiro veículo da fila
-			removido := ponto.Fila[0]
-			dadosPontos.Pontos[i].Fila = ponto.Fila[1:]
-
-			fmt.Printf("\nVeículo %s removido da fila do ponto %s.\n", removido, idPonto)
-			fmt.Printf("Fila atualizada do ponto %s: %v\n", idPonto, dadosPontos.Pontos[i].Fila)
-
-			encontrado = true
-			break
-		}
-	}
-
-	if encontrado {
-		salvarDadosPontos(dadosPontos)
-	} else {
-		fmt.Printf("Erro: Ponto de recarga com ID %s não encontrado.\n", idPonto)
-	}
+	//veiculo, achou := getVeiculo(carro)
+	//if achou {
+	//	dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
+	//	salvarDadosVeiculos(dadosVeiculos)
+	//} else {
+	//	fmt.Printf("Veiculo com a placa %s não encontrado.", carro)
+	//}
 }
 
 func salvarHistorico(filename string, historico Historico) {
@@ -423,15 +390,26 @@ func main() {
 		// Processa o primeiro carro da fila recebida
 		processarFila(mensagemRecebida.IdPonto, mensagemRecebida.Fila)
 
-		precoRecarga := calculaPrecoRecarga(dadosVeiculos.Veiculos[0].BateryLevel)
-		preco := fmt.Sprintf("PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
-		efetivarPagamento(dadosVeiculos.Veiculos[0].Placa, mensagemRecebida.IdPonto, precoRecarga)
+		placa := mensagemRecebida.Fila[0] //pega o primeiro elemento da fila
 
-		// Envia o preço da recarga de volta ao servidor
-		_, err = conn.Write([]byte(preco))
-		if err != nil {
-			fmt.Println("Erro ao enviar mensagem:", err)
+		veiculoSearch, achou := getVeiculo(placa) //pega o veiculo pela placa (placa) 
+
+		if(achou){
+			precoRecarga := calculaPrecoRecarga(veiculoSearch.BateryLevel)
+			preco := fmt.Sprintf("MENSAGEM DO PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
+			efetivarPagamento(veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
+	
+			// Envia o preço da recarga de volta ao servidor e confirma o registro do pagamento
+			_, err = conn.Write([]byte(preco))
+			if err != nil {
+				fmt.Println("Erro ao enviar mensagem:", err)
+			}
+
+		} else {
+			fmt.Println("\nNão encontrato veiculo com a placa: ", placa)
 		}
+
+		
 
 	}
 }

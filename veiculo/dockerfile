@@ -5,6 +5,6 @@ WORKDIR /app
 COPY . .
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/dadosVeiculos.json ./dadosVeiculos.json
 RUN ln -s /Projeto-Inicial-Pbl-Redes/dados/MapaDeFeira.csv ./MapaDeFeira.csv
-RUN go build -o veiculo veiculo.go sorteiaCoordenadas.go
+RUN go build -o veiculo veiculo.go sorteiaCoordenadas.go functions.go
 CMD ["./veiculo"]
 
