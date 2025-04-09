@@ -47,7 +47,7 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 
 		} else if veiculo, ok := getVeiculo(placa); ok {
 			fmt.Printf("\nCHEGA AQ 2\n")
-			msg, melhorPonto := analiseTodosPontos(lat, lon, veiculo.BateryLevel, placa)
+			msg, melhorPonto := analiseTodosPontos(lat, lon, veiculo.BateryLevel, veiculo.Placa)
 			conn.Write([]byte(msg))
 
 			sessao.AguardandoResposta = true
