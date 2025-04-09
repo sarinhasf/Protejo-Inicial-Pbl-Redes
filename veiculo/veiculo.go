@@ -47,8 +47,8 @@ func main() {
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
-	//conn, err := net.Dial("tcp", "server:8080")
-	conn, err := net.Dial("tcp", "10.65.133.231:8080")
+	conn, err := net.Dial("tcp", "server:8080")
+	//conn, err := net.Dial("tcp", "10.65.133.231:8080")
 
 	if err != nil {
 		fmt.Println("Erro ao conectar ao servidor:", err)
@@ -128,7 +128,7 @@ func main() {
 
 							time.Sleep(20 * time.Second) //espera alguns segundos antes de atualizar
 							dados.Veiculos[i].NivelBateria = 100   //atualiza nivel de bateria
-							salvarDadosVeiculos(dados)
+							//salvarDadosVeiculos(dados)
 							break                        //sai do for de receber mensagem
 						}
 

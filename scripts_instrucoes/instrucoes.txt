@@ -40,4 +40,24 @@ OBS. pode verificar os arquivos da pasta usando comando ls
 
 3- Após isso execute o script para linuz (com final sh):
 ./iniciaContainers.sh
+______________________________________________________________________________________________________________________________
 
+---#Como criar um novo Container (fora os prefeinidos pelo compose)#---
+
+Exemplificando com veiculos
+1- Criei novos dados para associar ao veiculo na pasta dados
+
+2- rode o comando para entrar na msm rede: 
+docker network create recharging-network
+
+3- faz o build da imagem: docker build -t veiculo6 ./veiculo
+
+4- roda o container veiculo: 
+docker run -it --rm \
+  --name veiculo \
+  --network recharging-network \
+  -e PLACA=NOME-PLACA \
+  -v $(pwd)/dados/MapaDeFeira.csv:/app/MapaDeFeira.csv \
+  -v $(pwd)/dados/dadosVeiculos.json:/app/dadosVeiculos.json \
+  -v $(pwd)/dados/dadosPontos.json:/app/dadosPontos.json \
+  veiculo

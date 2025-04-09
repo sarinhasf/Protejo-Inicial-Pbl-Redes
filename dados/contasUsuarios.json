@@ -2,12 +2,7 @@
   "contas": [
     {
       "Id": 1,
-      "Pagamentos": [
-        {
-          "IdPonto": "1",
-          "Valor": 25
-        }
-      ]
+      "Pagamentos": []
     },
     {
       "Id": 2,

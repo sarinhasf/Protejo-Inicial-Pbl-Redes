@@ -18,3 +18,4 @@ docker-compose start ponto ponto2 ponto3 ponto4 ponto5
 
 # Inicia veiculo 1
 #docker-compose start veiculo
+docker start -ai veiculo

@@ -1,13 +1,10 @@
 package main
 
 import (
-	"encoding/csv"
 	"encoding/json" //pacote para manipulação de JSON
 	"fmt"
 	"net"
 	"os"
-	"strconv"
-	"strings"
 	"sync"
 	"time" //pacote para manipulação de tempo
 )
@@ -117,43 +114,6 @@ func leArquivoJsonVeiculos() {
 	}
 }
 
-func readChargingPoints(filename string) ([]ChargePoint, error) {
-	file, err := os.Open(filename) // abre o arquivo
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file) // cria um leitor de csv
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var chargePoints []ChargePoint
-
-	// Itera sobre as linhas do arquivo CSV e extrai os pontos de recarga
-	// A primeira linha é o cabeçalho, então começamos a partir da segunda linha
-	for i := 1; i < len(records); i++ {
-		rawData := records[i][0] //item 0 da linha i
-		if strings.HasPrefix(rawData, "POINT") {
-			rawData = strings.TrimPrefix(rawData, "POINT (")
-			rawData = strings.TrimSuffix(rawData, ")")
-			parts := strings.Split(rawData, " ")
-			if len(parts) != 2 {
-				continue
-			}
-
-			lat, _ := strconv.ParseFloat(parts[1], 64)
-			lon, _ := strconv.ParseFloat(parts[0], 64)
-			nome := records[i][1]
-
-			chargePoints = append(chargePoints, ChargePoint{Latitude: lat, Longitude: lon, Nome: nome})
-		}
-	}
-	return chargePoints, nil
-}
-
 func getVeiculo(placa string) (Veiculo, bool) {
 	var veiculoFinal Veiculo
 	controle := false
@@ -237,25 +197,13 @@ func processarFila(idPonto string, filaSlice []string) {
 	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n\n", idPonto, carro, filaSlice)
 
 	//Atualizando porcentagem do veiculo
-	//veiculo, achou := getVeiculo(carro)
-	//if achou {
-	//	dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
-	//	salvarDadosVeiculos(dadosVeiculos)
-	//} else {
-	//	fmt.Printf("Veiculo com a placa %s não encontrado.", carro)
-	//}
-}
-
-func salvarHistorico(filename string, historico Historico) {
-	bytes, err := json.MarshalIndent(historico, "", "  ")
-	if err != nil {
-		fmt.Println("Erro ao converter histórico para JSON:", err)
-		return
-	}
-
-	err = os.WriteFile(filename, bytes, 0644)
-	if err != nil {
-		fmt.Println("Erro ao salvar o arquivo histórico:", err)
+	veiculo, achou := getVeiculo(carro)
+	if achou {
+		leArquivoJsonVeiculos()
+		dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
+		salvarDadosVeiculos(dadosVeiculos)
+	} else {
+		fmt.Printf("Veiculo com a placa %s não encontrado.", carro)
 	}
 }
 
@@ -273,17 +221,16 @@ func salvarDadosVeiculos(data DadosVeiculos) {
 	}
 }
 
-func salvarDadosPontos(data DadosPontos) {
-	bytes, err := json.MarshalIndent(data, "", "  ")
+func salvarHistorico(filename string, historico Historico) {
+	bytes, err := json.MarshalIndent(historico, "", "  ")
 	if err != nil {
-		fmt.Println("Erro ao converter dados para JSON:", err)
+		fmt.Println("Erro ao converter histórico para JSON:", err)
 		return
 	}
 
-	err = os.WriteFile("dadosPontos.json", bytes, 0644)
+	err = os.WriteFile(filename, bytes, 0644)
 	if err != nil {
-		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
-		return
+		fmt.Println("Erro ao salvar o arquivo histórico:", err)
 	}
 }
 
@@ -291,13 +238,13 @@ func salvarDadosPontos(data DadosPontos) {
 func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 	mutex.Lock()         //bloqueia acesso concorrente
 	defer mutex.Unlock() //libera depois da execução da função
+	leArquivoJsonContas()
 
 	veiculo, achou := getVeiculo(idVeiculo)
 	contaId := veiculo.IdConta
 
 	if achou {
 		contaVeiculo, achou2 := getContaUsuario(contaId)
-		//fmt.Printf("\nO ID da conta o veiculo %s é: %d\n", veiculo.Placa, contaVeiculo.Id)
 
 		if achou2 {
 			novoPagamento := Pagamentos{
@@ -320,12 +267,13 @@ func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 }
 
 func calculaPrecoRecarga(nivelBateria int) float64 {
-	bateria := float64(nivelBateria)                                         // nível da bateria do carro
-	var precoPorKWh float64 = 0.5                                            // preço médio por kWh
-	var capacidadeBateria float64 = 50.0                                     // capacidade média de um carro elétrico
-	var KWPorPorcentagem float64 = capacidadeBateria / 100.0                 // kw por %
-	var bateriaEmKW float64 = KWPorPorcentagem * bateria                     // bateria em kW
-	var precoTotal float64 = (capacidadeBateria - bateriaEmKW) * precoPorKWh // Preço total da recarga
+	bateriaAtual := float64(nivelBateria) 
+	falta := 100.0 - bateriaAtual  //bateria desejada - atual (quanto falta em %)
+	var precoPorKWh float64 = 0.50  //valor da tarifa                                         
+	var capacidadeBateria float64 = 100.0              
+	faltaPorc := falta/100.0                       
+	energiaCarregada := faltaPorc * capacidadeBateria   //o resultado disso é o quanto de energia sera carregado o carro     
+	var precoTotal float64 = energiaCarregada * precoPorKWh
 
 	return precoTotal
 }
@@ -392,13 +340,13 @@ func main() {
 
 		placa := mensagemRecebida.Fila[0] //pega o primeiro elemento da fila
 
-		veiculoSearch, achou := getVeiculo(placa) //pega o veiculo pela placa (placa) 
+		veiculoSearch, achou := getVeiculo(placa) //pega o veiculo pela placa (placa)
 
-		if(achou){
+		if achou {
 			precoRecarga := calculaPrecoRecarga(veiculoSearch.BateryLevel)
 			preco := fmt.Sprintf("MENSAGEM DO PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
 			efetivarPagamento(veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
-	
+
 			// Envia o preço da recarga de volta ao servidor e confirma o registro do pagamento
 			_, err = conn.Write([]byte(preco))
 			if err != nil {
@@ -408,8 +356,6 @@ func main() {
 		} else {
 			fmt.Println("\nNão encontrato veiculo com a placa: ", placa)
 		}
-
-		
 
 	}
 }

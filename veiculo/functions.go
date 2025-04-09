@@ -28,20 +28,6 @@ func leArquivoJson(filename string) {
 	}
 }
 
-func salvarDadosVeiculos(data Dados) {
-	bytes, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		fmt.Println("Erro ao converter dados para JSON:", err)
-		return
-	}
-
-	err = os.WriteFile("dadosVeiculos.json", bytes, 0644)
-	if err != nil {
-		fmt.Println("Erro ao salvar no arquivo dadosPontos.json:", err)
-		return
-	}
-}
-
 func leMapaFeira() []Point {
 	polygon, err := readPolygon("MapaDeFeira.csv")
 	if err != nil {
