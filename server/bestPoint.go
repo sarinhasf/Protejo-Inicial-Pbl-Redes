@@ -19,9 +19,10 @@ type ChargePoint struct {
 }
 
 type PontoInfo struct {
-	Ponto       ChargePoint
-	Distancia   float64
-	TamanhoFila int
+	Ponto     string
+	PontoID     string
+	Distancia float64
+	Fila      []string
 }
 
 func readChargingPoints(filename string) ([]ChargePoint, error) {
@@ -136,9 +137,10 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 		pontoEncontrado, controle := getPonto(point.Id)
 		if controle {
 			p := PontoInfo{
-				Ponto:       point,
-				Distancia:   dist,
-				TamanhoFila: len(pontoEncontrado.Fila),
+				Ponto:      pontoEncontrado.Nome,
+				PontoID:    pontoEncontrado.Id,
+				Distancia:  dist,
+				Fila:       pontoEncontrado.Fila,
 			}
 			pontosOrdenados = append(pontosOrdenados, p)
 
@@ -150,19 +152,40 @@ func analiseTodosPontos(lat float64, lon float64, bateria int, placa string) (st
 
 	//comparar em relação ao custo -> o custo é uma variavel relacionando o tempo de distancia e o tempo médio de fila
 	sort.Slice(pontosOrdenados, func(i, j int) bool {
-		// Define seu critério de custo aqui
-		custoI := tempoDistancia(pontosOrdenados[i].Distancia) + float64(pontosOrdenados[i].TamanhoFila)*calcularTempoCargaHoras(bateria)
-		custoJ := tempoDistancia(pontosOrdenados[j].Distancia) + float64(pontosOrdenados[j].TamanhoFila)*calcularTempoCargaHoras(bateria)
+		var tempoTotal1 float64
+		var tempoTotal2 float64
+
+		if len(pontosOrdenados[i].Fila) != 0 {
+			for _, c := range pontosOrdenados[i].Fila {
+				carro, achou := getVeiculo(c)
+				if achou {
+					tempoTotal1 += calcularTempoCargaHoras(carro.BateryLevel)
+				}
+			}
+		}else {
+			tempoTotal1 = 0.0
+		}
+
+		if len(pontosOrdenados[j].Fila) != 0 {
+			for _, v := range pontosOrdenados[j].Fila {
+				carro, achou := getVeiculo(v)
+				if achou {
+					tempoTotal2 += calcularTempoCargaHoras(carro.BateryLevel)
+				}
+			}
+		}else {
+			tempoTotal2 = 0.0
+		}
+
+		custoI := tempoDistancia(pontosOrdenados[i].Distancia) + tempoTotal1
+		custoJ := tempoDistancia(pontosOrdenados[j].Distancia) + tempoTotal2
 		return custoI < custoJ
 	})
 
 	//Tendo a fila ordenada agora pegamos o primeiro elemento
 	melhor := pontosOrdenados[0]
-	//melhor2 := pontosOrdenados[1]
 
-	//fmt.Printf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto.Nome, melhor.Distancia, melhor.TamanhoFila)
-	//fmt.Printf("O segundo melhor ponto seria: %s - Distância: %.2fKm - Fila: %d veículos\n", melhor2.Ponto.Nome, melhor2.Distancia, melhor2.TamanhoFila)
-	mensagem := fmt.Sprintf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto.Nome, melhor.Distancia, melhor.TamanhoFila)
+	mensagem := fmt.Sprintf("Melhor ponto para o veículo %s: %s - Distância: %.2fKm - Fila: %d veículos\n", placa, melhor.Ponto, melhor.Distancia, len(melhor.Fila))
 	return mensagem, melhor
 }
 

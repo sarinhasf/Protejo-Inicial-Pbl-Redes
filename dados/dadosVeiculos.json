@@ -6,7 +6,7 @@
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "batery_level": 100,
       "conta_id": 1
     },
     {
@@ -15,7 +15,7 @@
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "batery_level": 100,
       "conta_id": 2
     },
     {
@@ -24,7 +24,7 @@
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "batery_level": 100,
       "conta_id": 3
     },
     {
@@ -33,7 +33,7 @@
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "batery_level": 100,
       "conta_id": 4
     },
     {
@@ -42,7 +42,7 @@
         "latitude": 0,
         "longitude": 0
       },
-      "batery_level": 0,
+      "batery_level": 100,
       "conta_id": 5
     }
   ]

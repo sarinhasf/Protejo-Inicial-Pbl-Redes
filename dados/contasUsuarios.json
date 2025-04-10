@@ -2,23 +2,88 @@
   "contas": [
     {
       "Id": 1,
-      "Pagamentos": []
+      "Pagamentos": [
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        },
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        },
+        {
+          "IdPonto": "4",
+          "Valor": 0
+        },
+        {
+          "IdPonto": "2",
+          "Valor": 0
+        },
+        {
+          "IdPonto": "5",
+          "Valor": 0
+        },
+        {
+          "IdPonto": "1",
+          "Valor": 0
+        }
+      ]
     },
     {
       "Id": 2,
-      "Pagamentos": []
+      "Pagamentos": [
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        },
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        },
+        {
+          "IdPonto": "4",
+          "Valor": 50
+        }
+      ]
     },
     {
       "Id": 3,
-      "Pagamentos": []
+      "Pagamentos": [
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        },
+        {
+          "IdPonto": "1",
+          "Valor": 0
+        },
+        {
+          "IdPonto": "2",
+          "Valor": 0
+        },
+        {
+          "IdPonto": "2",
+          "Valor": 0
+        }
+      ]
     },
     {
       "Id": 4,
-      "Pagamentos": []
+      "Pagamentos": [
+        {
+          "IdPonto": "5",
+          "Valor": 50
+        }
+      ]
     },
     {
       "Id": 5,
-      "Pagamentos": []
+      "Pagamentos": [
+        {
+          "IdPonto": "3",
+          "Valor": 50
+        }
+      ]
     }
   ]
 }

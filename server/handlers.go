@@ -51,8 +51,8 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 			conn.Write([]byte(msg))
 
 			sessao.AguardandoResposta = true
-			sessao.MelhorPontoID = melhorPonto.Ponto.Id
-			sessao.MelhorPontoNome = melhorPonto.Ponto.Nome
+			sessao.MelhorPontoID = melhorPonto.PontoID
+			sessao.MelhorPontoNome = melhorPonto.Ponto
 		}
 
 	} else if sessao.AguardandoResposta {
@@ -65,9 +65,6 @@ func handleVeiculo(sessao *SessaoCliente, mensagem string) {
 			addFila(sessao.MelhorPontoID, sessao.PlacaVeiculo) //adicionando veiculo na fila
 			confirmacao := fmt.Sprintf("Veículo %s adicionado à fila do ponto de recarga %s\n", sessao.PlacaVeiculo, sessao.MelhorPontoNome)
 			conn.Write([]byte(confirmacao + "\n")) //envia confirmação ao veiculo
-
-			// Envia JSON da fila para o ponto
-			//sendFila(sessao.MelhorPontoID)
 
 		} else {
 			fmt.Printf("Veículo %s recusou entrar na fila\n", sessao.PlacaVeiculo)
@@ -91,11 +88,10 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 
 	} else if strings.HasPrefix(mensagem, "MENSAGEM DO PONTO: Veiculo ") {
 		fmt.Println(mensagem)
-		fmt.Printf("\nPagamento Registrado com Sucesso na conta!\n")
 
 		placaRegex := regexp.MustCompile(`[A-Z]{3}[0-9][A-Z0-9][0-9]{2}`)
 		placa := placaRegex.FindString(mensagem)
-		//fmt.Println("placa:", placa)
+		fmt.Printf("\nPagamento Registrado com Sucesso na conta do veiculo %s\n", placa)
 
 		// Regex para o número do ponto (após "Ponto ")
 		pontoRegex := regexp.MustCompile(`Ponto (\d+)`)
@@ -105,9 +101,6 @@ func handlePonto(sessao *SessaoCliente, mensagem string) {
 			ponto = pontoMatch[1]
 		}
 		ponto = strings.TrimSpace(ponto)
-		//fmt.Println("numero do ponto:", ponto)
-		//fmt.Println("\n======================================================================================")
-		//fmt.Printf("Veículo %s finalizou recarga no ponto %s, e seu pagamento foi registrado com sucesso!\n\n", placa, ponto)
 
 		removeFila(ponto, placa)
 	}

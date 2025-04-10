@@ -127,6 +127,19 @@ func getVeiculo(placa string) (Veiculo, bool) {
 	return veiculoFinal, controle
 }
 
+func getPonto(id string) (PontoRecarga, bool) {
+	var pontoFinal PontoRecarga
+	controle := false
+
+	for _, ponto := range dadosPontos.Pontos {
+		if ponto.Id == id {
+			pontoFinal = ponto
+			controle = true
+		}
+	}
+	return pontoFinal, controle
+}
+
 func getContaUsuario(id int) (ContaUser, bool) {
 	var contaFinal ContaUser
 	controle := false
@@ -152,59 +165,39 @@ func salvarDadosContas() {
 	}
 }
 
-func processarFila(idPonto string, filaSlice []string) {
+func processarFila(idPonto string, filaSlice []string) float64 {
 	mutex.Lock()         //bloqueia acesso concorrente
 	defer mutex.Unlock() //libera depois da execução da função
 
-	// Verifica se a fila não está vazia
-	if len(filaSlice) == 0 {
-		fmt.Println("Fila vazia, nada para processar.")
-		return
-	}
+	var preco float64
 
 	// Pega o primeiro carro da fila
-	carro := filaSlice[0]
-
-	// Cria o histórico com status "carregando"
-	historico := Historico{
-		Carro:  carro,
-		Status: "carregando",
-	}
-
-	// Salva o histórico no arquivo JSON
-	filename := fmt.Sprintf("historicodoponto%s.json", idPonto)
-	salvarHistorico(filename, historico)
-
+	placa := filaSlice[0]
 	// Aguarda um minuto
-	fmt.Printf("Carro %s está carregando...\n", carro)
-	time.Sleep(30 * time.Second) // Simula o tempo de carregamento (30 segundos para teste)
+	fmt.Printf("Carro %s está carregando...\n", placa)
+	time.Sleep(10 * time.Second) // Simula o tempo de carregamento
+	fmt.Printf("Carro %s ainda está carregando...\n", placa)
+	time.Sleep(10 * time.Second) // Simula o tempo de carregamento
+	fmt.Printf("Carro %s carregado!\n", placa)
 
-	// Atualiza o status para "carregado"
-	historico.Status = "carregado"
-	salvarHistorico(filename, historico)
-	fmt.Printf("Carro %s foi carregado.\n", carro)
-
-	// le e imprime o arquivo JSON de histórico
-	conteudo, err := os.ReadFile(filename)
-	if err != nil {
-		fmt.Println("Erro ao ler arquivo de histórico:", err)
-		return
-	}
-	fmt.Printf("Conteúdo do arquivo %s: \n%s \n", filename, string(conteudo))
-
-	// Remove o carro da fila
-	filaSlice = filaSlice[1:] // Remove o primeiro carro da fila
-	fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s: %v\n\n", idPonto, carro, filaSlice)
-
-	//Atualizando porcentagem do veiculo
-	veiculo, achou := getVeiculo(carro)
+	veiculo, achou := getVeiculo(placa)
 	if achou {
+		preco = calculaPrecoRecarga(veiculo.BateryLevel)
+		idConta := efetivarPagamento(placa, idPonto, preco)
+
+		//atualizando o arquivo
 		leArquivoJsonVeiculos()
-		dadosVeiculos.Veiculos[veiculo.IdConta-1].BateryLevel = 100
+		dadosVeiculos.Veiculos[idConta-1].BateryLevel = 100
 		salvarDadosVeiculos(dadosVeiculos)
+
+		//fmt.Printf("\nFila atualizada do ponto %s, retirando o Veículo %s.\n\n", idPonto, placa)
+
 	} else {
-		fmt.Printf("Veiculo com a placa %s não encontrado.", carro)
+		fmt.Printf("\nCarro com a placa %s não encontrado.\n", placa)
+		return 0.0
 	}
+
+	return preco //retorna o preco
 }
 
 func salvarDadosVeiculos(data DadosVeiculos) {
@@ -221,23 +214,8 @@ func salvarDadosVeiculos(data DadosVeiculos) {
 	}
 }
 
-func salvarHistorico(filename string, historico Historico) {
-	bytes, err := json.MarshalIndent(historico, "", "  ")
-	if err != nil {
-		fmt.Println("Erro ao converter histórico para JSON:", err)
-		return
-	}
-
-	err = os.WriteFile(filename, bytes, 0644)
-	if err != nil {
-		fmt.Println("Erro ao salvar o arquivo histórico:", err)
-	}
-}
-
 // passa o Id do veiculo, o Id do ponto e o valor
-func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
-	mutex.Lock()         //bloqueia acesso concorrente
-	defer mutex.Unlock() //libera depois da execução da função
+func efetivarPagamento(idVeiculo string, idPonto string, valor float64) int {
 	leArquivoJsonContas()
 
 	veiculo, achou := getVeiculo(idVeiculo)
@@ -256,7 +234,7 @@ func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 
 			// Salva no arquivo contasUsuarios.json
 			salvarDadosContas()
-			fmt.Printf("Pagamento registrado com sucesso do Veículo %s.", veiculo.Placa)
+			fmt.Printf("\nPagamento registrado com sucesso do Veículo %s.\n", veiculo.Placa)
 		} else {
 			fmt.Printf("Conta do Veiculo %s não encontrada!", veiculo.Placa)
 		}
@@ -264,15 +242,17 @@ func efetivarPagamento(idVeiculo string, idPonto string, valor float64) {
 	} else {
 		fmt.Println("Veiculo não encontrado!")
 	}
+
+	return contaId
 }
 
 func calculaPrecoRecarga(nivelBateria int) float64 {
-	bateriaAtual := float64(nivelBateria) 
+	bateriaAtual := float64(nivelBateria)
 	falta := 100.0 - bateriaAtual  //bateria desejada - atual (quanto falta em %)
-	var precoPorKWh float64 = 0.50  //valor da tarifa                                         
-	var capacidadeBateria float64 = 100.0              
-	faltaPorc := falta/100.0                       
-	energiaCarregada := faltaPorc * capacidadeBateria   //o resultado disso é o quanto de energia sera carregado o carro     
+	var precoPorKWh float64 = 0.50 //valor da tarifa
+	var capacidadeBateria float64 = 100.0
+	faltaPorc := falta / 100.0
+	energiaCarregada := faltaPorc * capacidadeBateria //o resultado disso é o quanto de energia sera carregado o carro
 	var precoTotal float64 = energiaCarregada * precoPorKWh
 
 	return precoTotal
@@ -281,7 +261,7 @@ func calculaPrecoRecarga(nivelBateria int) float64 {
 func main() {
 	leArquivoJsonContas()
 	leArquivoJsonVeiculos()
-	//leArquivoJsonPontos()
+	leArquivoJsonPontos()
 
 	//Faz conexão
 	//conn -> representa nossa conexão/rede
@@ -309,53 +289,28 @@ func main() {
 		return
 	}
 
-	buffer := make([]byte, 1024) // buffer para receber dados do servidor
-	// Loop para receber mensagens do servidor
+	// Loop para processar fila
+	// o ponto fica sempre em loop e sempre que tem veiculo na fila ele processa, como forma de simulação
 	for {
-		n, err := conn.Read(buffer)
-		if err != nil {
-			fmt.Println("Erro ao receber mensagem do servidor:", err)
-			break
-		}
-
-		// decodifica a mensagem recebida
-		// Exemplo de mensagem recebida: {"id_ponto": "1", "fila": ["carro1", "carro2"]}
-		var mensagemRecebida struct {
-			IdPonto    string   `json:"id_ponto"`
-			Fila       []string `json:"fila"`
-			Carregando bool     `json:"carregando"`
-		}
-
-		err = json.Unmarshal(buffer[:n], &mensagemRecebida)
-		if err != nil {
-			fmt.Println("Erro ao decodificar mensagem recebida:", err)
-			continue
-		}
-
-		// exibe a fila recebida
-		fmt.Printf("\nFila do ponto %s atualizada: %v\n", mensagemRecebida.IdPonto, mensagemRecebida.Fila)
-
-		// Processa o primeiro carro da fila recebida
-		processarFila(mensagemRecebida.IdPonto, mensagemRecebida.Fila)
-
-		placa := mensagemRecebida.Fila[0] //pega o primeiro elemento da fila
-
-		veiculoSearch, achou := getVeiculo(placa) //pega o veiculo pela placa (placa)
-
+		leArquivoJsonPontos() //atualiza os dados dos pontos
+		ponto, achou := getPonto(pontoID)
 		if achou {
-			precoRecarga := calculaPrecoRecarga(veiculoSearch.BateryLevel)
-			preco := fmt.Sprintf("MENSAGEM DO PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
-			efetivarPagamento(veiculoSearch.Placa, mensagemRecebida.IdPonto, precoRecarga)
 
-			// Envia o preço da recarga de volta ao servidor e confirma o registro do pagamento
-			_, err = conn.Write([]byte(preco))
-			if err != nil {
-				fmt.Println("Erro ao enviar mensagem:", err)
+			if len(ponto.Fila) != 0 { //so faz processamento de fila se ela for diferente de 0
+
+				precoRecarga := processarFila(pontoID, ponto.Fila)
+				preco := fmt.Sprintf("MENSAGEM DO PONTO: Veiculo %s carregado no Ponto %s - Valor da Recarga: R$ %.2f\n", ponto.Fila[0], pontoID, precoRecarga)
+				// Envia o preço da recarga de volta ao servidor e confirma o registro do pagamento
+				_, err = conn.Write([]byte(preco))
+				if err != nil {
+					fmt.Println("Erro ao enviar mensagem:", err)
+				}
 			}
 
 		} else {
-			fmt.Println("\nNão encontrato veiculo com a placa: ", placa)
+			fmt.Println("Ponto não encontrado!")
 		}
 
+		time.Sleep(15 * time.Second)
 	}
 }

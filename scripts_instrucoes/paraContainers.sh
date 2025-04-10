@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #para tds containers
 docker-compose stop
 
@@ -5,6 +7,6 @@ docker-compose stop
 docker-compose down: remover containers criados
 
 #faz uma limpeza geral no docker, tirandos chaches e tal para não da erro
-docker system prune -a --volumes
+#docker system prune -a --volumes
 
 clear

@@ -128,7 +128,6 @@ func main() {
 
 							time.Sleep(20 * time.Second) //espera alguns segundos antes de atualizar
 							dados.Veiculos[i].NivelBateria = 100   //atualiza nivel de bateria
-							//salvarDadosVeiculos(dados)
 							break                        //sai do for de receber mensagem
 						}
 

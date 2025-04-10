@@ -79,6 +79,8 @@ func getPonto(id string) (PontoRecarga, bool) {
 }
 
 func sendFila(idPonto string) {
+	leArquivoJsonPontos() //pra atualizar os dados do pontos caso sejam alterados
+
 	for _, ponto := range dadosPontos.Pontos {
 		if ponto.Id == idPonto {
 			// cria um objeto contendo o id do ponto e a fila
@@ -119,6 +121,8 @@ func addFila(idPonto string, placaVeiculo string) {
 	mutex.Lock()         //bloqueia acesso concorrente
 	defer mutex.Unlock() //libera depois da execução
 
+	leArquivoJsonPontos() //atualiza os dados dos pontos
+
 	encontrado := false
 
 	for i, ponto := range dadosPontos.Pontos {
@@ -130,11 +134,12 @@ func addFila(idPonto string, placaVeiculo string) {
 			// imprime a fila atualizada do ponto
 			fmt.Printf("\nFila atualizada do ponto %s, adicionando o veículo: %v\n", idPonto, dadosPontos.Pontos[i].Fila)
 
-			sendFila(idPonto) // Envia a fila atualizada para o ponto de recarga
+			//sendFila(idPonto) // Envia a fila atualizada para o ponto de recarga
 
 			break
 		}
 	}
+	
 	if encontrado {
 		salvarDados(dadosPontos) // Salva os dados atualizados no arquivo JSON
 	} else {

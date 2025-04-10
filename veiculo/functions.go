@@ -28,6 +28,20 @@ func leArquivoJson(filename string) {
 	}
 }
 
+func leArquivoJsonVeiculos() {
+	bytes, err := os.ReadFile("dadosVeiculos.json")
+	if err != nil {
+		fmt.Println("Erro ao abrir arquivo JSON:", err)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &dados)
+	if err != nil {
+		fmt.Println("Erro ao decodificar JSON:", err)
+		return
+	}
+}
+
 func leMapaFeira() []Point {
 	polygon, err := readPolygon("MapaDeFeira.csv")
 	if err != nil {
